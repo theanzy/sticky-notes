@@ -87,7 +87,9 @@ textarea:focus {
 .delete-icon {
   cursor: pointer;
 }
-
+.delete-icon:hover {
+  color: #bababa;
+}
 .search {
   display: flex;
   align-items: center;

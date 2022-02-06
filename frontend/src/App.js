@@ -18,9 +18,17 @@ function App() {
     };
     setNotes([...notes, newNote]);
   };
+  const deleteNote = (id) => {
+    const updatedNotes = notes.filter((note) => note.id !== id);
+    setNotes(updatedNotes);
+  };
   return (
     <div className='container'>
-      <NoteList notes={notes} handleAddNote={addNote} />
+      <NoteList
+        notes={notes}
+        handleAddNote={addNote}
+        handleDeleteNote={deleteNote}
+      />
     </div>
   );
 }

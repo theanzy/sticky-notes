@@ -46,6 +46,10 @@ code {
 }
 
 textarea {
+  overflow: hidden;
+}
+
+textarea.new {
   border: none;
   resize: none;
   background-color: #67d7cc;
@@ -53,6 +57,7 @@ textarea {
 
 textarea:focus {
   outline: none;
+  overflow: auto;
 }
 
 .btn {
@@ -76,6 +81,12 @@ textarea:focus {
   flex-direction: column;
   justify-content: space-between;
   white-space: pre-wrap;
+}
+
+.note textarea {
+  border: none;
+  resize: none;
+  background-color: transparent;
 }
 
 .note-footer {

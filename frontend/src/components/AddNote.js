@@ -23,6 +23,7 @@ const AddNote = ({ handleAddNote }) => {
         rows='8'
         cols='10'
         value={noteText}
+        className='new'
         placeholder='Type to add a note...'
         onChange={handleTextChange}></textarea>
       <div className='note-footer'>

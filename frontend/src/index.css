@@ -32,6 +32,8 @@ code {
   margin-left: auto;
   padding-right: 15px;
   padding-left: 15px;
+  padding-bottom: 20px;
+  padding-top: 0px;
   min-height: 100vh;
 }
 
@@ -81,6 +83,10 @@ textarea:focus {
   flex-direction: column;
   justify-content: space-between;
   white-space: pre-wrap;
+}
+
+.note:focus-within {
+  outline: 2px solid #67d7cc;
 }
 
 .note textarea {

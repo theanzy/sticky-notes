@@ -1,19 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';
 import Header from './components/Header';
+import { saveNotes, getNotes } from './data/NotesData';
 
 function App() {
-  const [notes, setNotes] = useState([
-    { id: nanoid(), text: 'this is my first note', date: '15/04/2021' },
-    { id: nanoid(), text: 'this is my second note', date: '16/04/2021' },
-    { id: nanoid(), text: 'this is my third note', date: '17/04/2021' },
-    { id: nanoid(), text: 'this is my fourth note', date: '18/04/2021' },
-  ]);
-
+  const [notes, setNotes] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [darkModeOn, setDarkModeOn] = useState(false);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const savedNotes = await getNotes();
+      if (savedNotes) {
+        setNotes(savedNotes);
+      }
+    };
+    fetchNotes();
+  }, []);
+  useEffect(() => {
+    const storeNotes = async () => {
+      await saveNotes(notes);
+    };
+    storeNotes();
+  }, [notes]);
+
   const addNote = (text) => {
     const date = new Date();
     const newNote = {

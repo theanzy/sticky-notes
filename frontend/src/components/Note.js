@@ -2,9 +2,7 @@ import { MdDeleteForever } from 'react-icons/md';
 const Note = ({ id, text, date, handleDeleteNote }) => {
   return (
     <div className='note'>
-      <textarea rows='8' cols='10'>
-        {text}
-      </textarea>
+      <textarea rows='8' cols='10' value={text} onChange={() => {}} />
       <div className='note-footer'>
         <small>{date}</small>
         <MdDeleteForever

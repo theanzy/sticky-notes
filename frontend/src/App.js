@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';
 import Header from './components/Header';
 import { saveNotes, getNotes } from './data/NotesData';
+import debounce from 'lodash/debounce';
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -40,6 +41,30 @@ function App() {
     setNotes(updatedNotes);
   };
 
+  const updateText = (id, text) => {
+    console.log(id, text);
+    setNotes(
+      notes.map((note) => {
+        if (note.id === id) {
+          note.text = text;
+          debouncedUpdateNote(note);
+        }
+        return note;
+      })
+    );
+  };
+
+  const updateNote = (note) => {
+    // save note to ...
+  };
+
+  const debouncedUpdateNote = useMemo(() => debounce(updateNote, 500), []);
+  useEffect(() => {
+    return () => {
+      debouncedUpdateNote.cancel();
+    };
+  }, []);
+
   return (
     <div className={darkModeOn ? 'dark-mode' : ''}>
       <div className='container'>
@@ -51,6 +76,7 @@ function App() {
           )}
           handleAddNote={addNote}
           handleDeleteNote={deleteNote}
+          handleTextUpdated={updateText}
         />
       </div>
     </div>

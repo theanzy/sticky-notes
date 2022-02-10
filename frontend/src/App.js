@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';
@@ -20,6 +20,7 @@ function App() {
     };
     fetchNotes();
   }, []);
+
   useEffect(() => {
     const storeNotes = async () => {
       await saveNotes(notes);
@@ -36,32 +37,25 @@ function App() {
     };
     setNotes([...notes, newNote]);
   };
+
   const deleteNote = (id) => {
     const updatedNotes = notes.filter((note) => note.id !== id);
     setNotes(updatedNotes);
   };
 
-  const updateText = (id, text) => {
-    console.log(id, text);
-    setNotes(
-      notes.map((note) => {
-        if (note.id === id) {
-          note.text = text;
-          debouncedUpdateNote(note);
-        }
-        return note;
-      })
-    );
+  const handleNoteUpdated = (note) => {
+    setNotes([...notes.filter((_note) => _note.id !== note.id), note]);
+    debouncedSaveNote(note);
   };
-
-  const updateNote = (note) => {
+  const saveNote = (note) => {
     // save note to ...
+    console.log('saving', note);
   };
 
-  const debouncedUpdateNote = useMemo(() => debounce(updateNote, 500), []);
+  const debouncedSaveNote = useMemo(() => debounce(saveNote, 500), []);
   useEffect(() => {
     return () => {
-      debouncedUpdateNote.cancel();
+      debouncedSaveNote.cancel();
     };
   }, []);
 
@@ -76,7 +70,7 @@ function App() {
           )}
           handleAddNote={addNote}
           handleDeleteNote={deleteNote}
-          handleTextUpdated={updateText}
+          handleNoteUpdated={handleNoteUpdated}
         />
       </div>
     </div>

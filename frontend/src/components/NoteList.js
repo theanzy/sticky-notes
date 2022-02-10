@@ -5,7 +5,7 @@ const NoteList = ({
   notes,
   handleAddNote,
   handleDeleteNote,
-  handleTextUpdated,
+  handleNoteUpdated,
 }) => {
   return (
     <div className='notes-list'>
@@ -16,7 +16,7 @@ const NoteList = ({
           text={note.text}
           date={note.date}
           handleDeleteNote={handleDeleteNote}
-          handleTextUpdated={handleTextUpdated}
+          handleNoteUpdated={handleNoteUpdated}
         />
       ))}
       <AddNote handleAddNote={handleAddNote} />

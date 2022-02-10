@@ -1,13 +1,13 @@
 import ThemeToggleButton from './ThemeToggleButton';
 
-const Header = ({ toggleDarkMode }) => {
+const Header = ({ checked, toggleDarkMode }) => {
   const toggleTheme = () => {
     toggleDarkMode((darkMode) => !darkMode);
   };
   return (
     <div className='header'>
       <h1>Notes</h1>
-      <ThemeToggleButton onToggle={toggleTheme} />
+      <ThemeToggleButton checked={checked} onToggle={toggleTheme} />
     </div>
   );
 };

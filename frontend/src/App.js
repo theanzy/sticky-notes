@@ -5,6 +5,7 @@ import Search from './components/Search';
 import Header from './components/Header';
 import { saveNotes, getNotes } from './data/NotesData';
 import debounce from 'lodash/debounce';
+import { getDarkMode, saveDarkMode } from './data/DarkModeData';
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -59,10 +60,26 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const loadDarkMode = async () => {
+      const darkModeLoaded = await getDarkMode();
+      if (darkModeLoaded) {
+        setDarkModeOn(darkModeLoaded);
+      }
+    };
+    loadDarkMode();
+  }, []);
+  useEffect(() => {
+    const storeDarkMode = async () => {
+      await saveDarkMode(darkModeOn);
+    };
+    storeDarkMode();
+  }, [darkModeOn]);
+
   return (
     <div className={darkModeOn ? 'dark-mode' : ''}>
       <div className='container'>
-        <Header toggleDarkMode={setDarkModeOn} />
+        <Header checked={darkModeOn} toggleDarkMode={setDarkModeOn} />
         <Search handleSearchNote={setSearchText} />
         <NoteList
           notes={notes.filter((note) =>

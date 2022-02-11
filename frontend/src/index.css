@@ -43,10 +43,6 @@ code {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
-.note.new {
-  background-color: #67d7cc;
-}
-
 textarea {
   overflow: hidden;
 }
@@ -76,8 +72,7 @@ textarea:focus {
 
 .note {
   background-color: #fef68a;
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: 2px;
   min-height: 170px;
   display: flex;
   flex-direction: column;
@@ -85,22 +80,33 @@ textarea:focus {
   white-space: pre-wrap;
 }
 
+.note.new {
+  background-color: #67d7cc;
+}
+
 .note:focus-within {
   outline: 2px solid #67d7cc;
 }
 
 .note textarea {
+  padding: 0.5rem;
   border: none;
   resize: none;
   background-color: transparent;
 }
 
+.note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f1e431;
+}
 .note-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 7px;
 }
-
 .delete-icon {
   cursor: pointer;
 }

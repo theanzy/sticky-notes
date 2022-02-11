@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MdDeleteForever } from 'react-icons/md';
+import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 const Note = ({ id, text, date, handleDeleteNote, handleNoteUpdated }) => {
   const [state, setState] = useState({});
   useEffect(() => {
@@ -20,6 +21,10 @@ const Note = ({ id, text, date, handleDeleteNote, handleNoteUpdated }) => {
 
   return (
     <div className='note'>
+      <div className='note-header'>
+        <div></div>
+        <MeatBallMenu />
+      </div>
       <textarea
         rows='8'
         cols='10'

@@ -1,0 +1,23 @@
+.list-menu-items {
+  display: flex;
+  position: absolute;
+  right: 0;
+  height: 22px;
+  background-color: white;
+}
+
+.list-menu-items .menu-item {
+  text-decoration: none;
+  display: block;
+  margin: 1px;
+}
+
+.list-menu-items input[type='radio'] {
+  display: none;
+}
+
+.list-menu-items label {
+  display: inline-block;
+  font-family: Arial;
+  cursor: pointer;
+}

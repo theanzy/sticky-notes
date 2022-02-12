@@ -4,7 +4,7 @@ const AddNote = ({ handleAddNote }) => {
   const handleTextChange = (event) => {
     const newText = event.target.value;
     setNoteText(newText);
-  };
+};
 
   const handleSave = () => {
     if (noteText.trim().length > 0) {

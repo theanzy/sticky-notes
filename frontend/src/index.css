@@ -99,7 +99,6 @@ textarea:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f1e431;
 }
 .note-footer {
   display: flex;

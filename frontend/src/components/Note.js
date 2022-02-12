@@ -1,29 +1,54 @@
 import { useEffect, useState } from 'react';
 import { MdDeleteForever } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
-const Note = ({ id, text, date, handleDeleteNote, handleNoteUpdated }) => {
+import './Colors.css';
+const Note = ({
+  id,
+  text,
+  date,
+  color,
+  handleDeleteNote,
+  handleNoteUpdated,
+}) => {
+  const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
   const [state, setState] = useState({});
   useEffect(() => {
     setState({
       id: id,
       text: text,
       date: date,
+      color: color,
     });
   }, []);
+
+  useEffect(() => {
+    handleNoteUpdated(state);
+  }, [state]);
 
   const updateText = (text) => {
     setState({
       ...state,
       text: text,
     });
-    handleNoteUpdated(state);
+  };
+
+  const changeColor = (newColor) => {
+    console.log(state.text, newColor);
+    setState({
+      ...state,
+      color: newColor,
+    });
   };
 
   return (
-    <div className='note'>
-      <div className='note-header'>
+    <div className={`note ${state.color}`}>
+      <div className={`note-header ${state.color}-header`}>
         <div></div>
-        <MeatBallMenu />
+        <MeatBallMenu
+          onSelectedItem={changeColor}
+          items={items}
+          selectedItem={state.color}
+        />
       </div>
       <textarea
         rows='8'

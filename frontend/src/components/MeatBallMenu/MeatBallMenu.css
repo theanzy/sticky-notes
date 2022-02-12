@@ -11,8 +11,8 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background-color: #ababab;
-  color: #ababab;
+  background-color: #575757;
+  color: #575757;
 }
 
 .dots::before,
@@ -24,8 +24,8 @@
   width: 3px;
   height: 3px;
   border-radius: 5px;
-  background-color: #ababab;
-  color: #ababab;
+  background-color: #575757;
+  color: #575757;
 }
 
 .dots::before {
@@ -34,4 +34,13 @@
 
 .dots::after {
   left: 5px;
+}
+
+.dropdown-content {
+  display: none;
+  width: 200px;
+}
+
+.meatball-menu:hover .dropdown-content {
+  display: block;
 }

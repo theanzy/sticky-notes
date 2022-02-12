@@ -35,6 +35,7 @@ function App() {
       id: nanoid(),
       date: date.toLocaleDateString(),
       text: text,
+      color: 'yellow',
     };
     setNotes([...notes, newNote]);
   };
@@ -44,9 +45,12 @@ function App() {
     setNotes(updatedNotes);
   };
 
-  const handleNoteUpdated = (note) => {
-    setNotes([...notes.filter((_note) => _note.id !== note.id), note]);
-    debouncedSaveNote(note);
+  const handleNoteUpdated = (updatedNote) => {
+    setNotes(
+      notes.map((note) => (note.id === updatedNote.id ? updatedNote : note))
+    );
+
+    debouncedSaveNote(updatedNote);
   };
   const saveNote = (note) => {
     // save note to ...

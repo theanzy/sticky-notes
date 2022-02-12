@@ -15,6 +15,7 @@ const NoteList = ({
           id={note.id}
           text={note.text}
           date={note.date}
+          color={note.color}
           handleDeleteNote={handleDeleteNote}
           handleNoteUpdated={handleNoteUpdated}
         />

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MdDeleteForever } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
+import debounce from 'lodash/debounce';
 import './Colors.css';
 const Note = ({
   id,
@@ -11,49 +12,48 @@ const Note = ({
   handleNoteUpdated,
 }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
-  const [state, setState] = useState({});
-  useEffect(() => {
-    setState({
-      id: id,
-      text: text,
-      date: date,
-      color: color,
-    });
-  }, []);
-
-  useEffect(() => {
-    handleNoteUpdated(state);
-  }, [state]);
+  const [noteText, setNoteText] = useState(text);
 
   const updateText = (text) => {
-    setState({
-      ...state,
-      text: text,
+    setNoteText(text);
+    debouncedSaveNote({
+      id: id,
+      date: date,
+      text: noteText,
+      color: color,
     });
   };
 
+  const debouncedSaveNote = useMemo(() => debounce(handleNoteUpdated, 500), []);
+  useEffect(() => {
+    return () => {
+      debouncedSaveNote.cancel();
+    };
+  }, []);
+
   const changeColor = (newColor) => {
-    console.log(state.text, newColor);
-    setState({
-      ...state,
+    handleNoteUpdated({
+      id: id,
+      date: date,
+      text: noteText,
       color: newColor,
     });
   };
 
   return (
-    <div className={`note ${state.color}`}>
-      <div className={`note-header ${state.color}-header`}>
+    <div className={`note ${color}`}>
+      <div className={`note-header ${color}-header`}>
         <div></div>
         <MeatBallMenu
           onSelectedItem={changeColor}
           items={items}
-          selectedItem={state.color}
+          selectedItem={color}
         />
       </div>
       <textarea
         rows='8'
         cols='10'
-        value={state.text}
+        value={noteText}
         onChange={(event) => updateText(event.target.value)}
       />
       <div className='note-footer'>

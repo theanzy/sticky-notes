@@ -2,7 +2,6 @@ import './ListMenuItems.css';
 import './ColorBox';
 import ColorBox from './ColorBox';
 const ListMenuItems = ({ items, onSelectedClick, selectedItem }) => {
-  console.log(selectedItem);
   return (
     <div className='list-menu-items'>
       {items.map((item, i) => (

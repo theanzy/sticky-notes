@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';
 import Header from './components/Header';
 import { saveNotes, getNotes } from './data/NotesData';
-import debounce from 'lodash/debounce';
 import { getDarkMode, saveDarkMode } from './data/DarkModeData';
 
 function App() {
@@ -49,20 +48,12 @@ function App() {
     setNotes(
       notes.map((note) => (note.id === updatedNote.id ? updatedNote : note))
     );
-
-    debouncedSaveNote(updatedNote);
+    saveNote(updatedNote);
   };
   const saveNote = (note) => {
     // save note to ...
     console.log('saving', note);
   };
-
-  const debouncedSaveNote = useMemo(() => debounce(saveNote, 500), []);
-  useEffect(() => {
-    return () => {
-      debouncedSaveNote.cancel();
-    };
-  }, []);
 
   useEffect(() => {
     const loadDarkMode = async () => {

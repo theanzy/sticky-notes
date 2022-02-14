@@ -13,7 +13,7 @@ const NoteList = ({
         <Note
           key={note.id}
           id={note.id}
-          text={note.text}
+          content={note.content}
           date={note.date}
           color={note.color}
           handleDeleteNote={handleDeleteNote}

@@ -28,14 +28,15 @@ function App() {
     storeNotes();
   }, [notes]);
 
-  const addNote = (text) => {
+  const addNote = (content) => {
     const date = new Date();
     const newNote = {
       id: nanoid(),
       date: date.toLocaleDateString(),
-      text: text,
+      content: content,
       color: 'yellow',
     };
+    console.log(newNote);
     setNotes([...notes, newNote]);
   };
 
@@ -78,7 +79,7 @@ function App() {
         <Search handleSearchNote={setSearchText} />
         <NoteList
           notes={notes.filter((note) =>
-            note.text.toLocaleLowerCase().includes(searchText)
+            note.content.toLocaleLowerCase().includes(searchText)
           )}
           handleAddNote={addNote}
           handleDeleteNote={deleteNote}

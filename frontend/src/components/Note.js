@@ -2,24 +2,23 @@ import { useEffect, useMemo, useState } from 'react';
 import { MdDeleteForever } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import debounce from 'lodash/debounce';
+import Editor from './Editor/Editor';
 import './Colors.css';
 const Note = ({
   id,
-  text,
+  content,
   date,
   color,
   handleDeleteNote,
   handleNoteUpdated,
 }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
-  const [noteText, setNoteText] = useState(text);
 
-  const updateText = (text) => {
-    setNoteText(text);
+  const updateContent = (content) => {
     debouncedSaveNote({
       id: id,
       date: date,
-      text: noteText,
+      content: content,
       color: color,
     });
   };
@@ -35,7 +34,7 @@ const Note = ({
     handleNoteUpdated({
       id: id,
       date: date,
-      text: noteText,
+      content: content,
       color: newColor,
     });
   };
@@ -50,12 +49,7 @@ const Note = ({
           selectedItem={color}
         />
       </div>
-      <textarea
-        rows='8'
-        cols='10'
-        value={noteText}
-        onChange={(event) => updateText(event.target.value)}
-      />
+      <Editor htmlContent={content} onContentChange={updateContent} />
       <div className='note-footer'>
         <small>{date}</small>
         <MdDeleteForever

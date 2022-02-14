@@ -1,27 +1,26 @@
 import { useState } from 'react';
+import Editor from './Editor/Editor';
+
 const AddNote = ({ handleAddNote }) => {
-  const [noteText, setNoteText] = useState('');
-  const handleTextChange = (event) => {
-    const newText = event.target.value;
-    setNoteText(newText);
-};
+  const [noteContent, setNoteContent] = useState('');
+  const handleContentChange = (content) => {
+    setNoteContent(content);
+  };
 
   const handleSave = () => {
-    if (noteText.trim().length > 0) {
-      handleAddNote(noteText);
-      setNoteText('');
+    if (noteContent.trim().length > 0) {
+      handleAddNote(noteContent);
+      setNoteContent('');
     }
   };
 
   return (
     <div className='note new'>
-      <textarea
-        rows='8'
-        cols='10'
-        value={noteText}
-        className='new'
-        placeholder='Type to add a note...'
-        onChange={handleTextChange}></textarea>
+      <Editor
+        htmlContent={noteContent}
+        placeholder='Add a new note'
+        onContentChange={handleContentChange}
+      />
       <div className='note-footer'>
         <small></small>
         <button className='btn' onClick={handleSave}>

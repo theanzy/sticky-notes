@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Editor from './Editor/Editor';
+import { MdAdd } from 'react-icons/md';
 
 const AddNote = ({ handleAddNote }) => {
   const [noteContent, setNoteContent] = useState('');
@@ -16,17 +17,14 @@ const AddNote = ({ handleAddNote }) => {
 
   return (
     <div className='note new'>
+      <div className='note-header-2'>
+        <MdAdd className='md-icon md-icon-normal' onClick={handleSave} />
+      </div>
       <Editor
         htmlContent={noteContent}
         placeholder='Add a new note'
         onContentChange={handleContentChange}
       />
-      <div className='note-footer'>
-        <small></small>
-        <button className='btn' onClick={handleSave}>
-          Save
-        </button>
-      </div>
     </div>
   );
 };

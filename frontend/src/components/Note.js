@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { MdDeleteForever } from 'react-icons/md';
+import { useEffect, useMemo } from 'react';
+import { MdClose } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import debounce from 'lodash/debounce';
 import Editor from './Editor/Editor';
@@ -42,22 +42,21 @@ const Note = ({
   return (
     <div className={`note ${color}`}>
       <div className={`note-header ${color}-header`}>
-        <div></div>
+        <MdClose
+          onClick={() => handleDeleteNote(id)}
+          className='md-icon'
+          size='1.3em'
+        />
         <MeatBallMenu
           onSelectedItem={changeColor}
           items={items}
           selectedItem={color}
         />
       </div>
-      <Editor htmlContent={content} onContentChange={updateContent} />
-      <div className='note-footer'>
+      <div className='note-header-2'>
         <small>{date}</small>
-        <MdDeleteForever
-          onClick={() => handleDeleteNote(id)}
-          className='delete-icon'
-          size='1.3em'
-        />
       </div>
+      <Editor htmlContent={content} onContentChange={updateContent} />
     </div>
   );
 };

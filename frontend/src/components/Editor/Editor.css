@@ -29,6 +29,7 @@
 .editor-container .ql-editor {
   min-height: 200px;
   max-height: 200px;
+  padding: 0px 10px;
   border: none;
   overflow-y: hidden;
 }

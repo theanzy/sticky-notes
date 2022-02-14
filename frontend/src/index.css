@@ -43,36 +43,14 @@ code {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
-textarea {
-  overflow: hidden;
-}
-
-textarea.new {
-  border: none;
-  resize: none;
-  background-color: #67d7cc;
-}
-
 textarea:focus {
   outline: none;
   overflow: auto;
 }
 
-.btn {
-  background-color: #e1e1e1;
-  border: none;
-  border-radius: 15px;
-  padding: 2px 10px 2px 10px;
-}
-
-.btn:hover {
-  background-color: #ededed;
-  cursor: pointer;
-}
-
 .note {
   background-color: #fef68a;
-  border-radius: 2px;
+  border-radius: 3px;
   min-height: 170px;
   display: flex;
   flex-direction: column;
@@ -88,31 +66,34 @@ textarea:focus {
   outline: 2px solid #67d7cc;
 }
 
-.note textarea {
-  padding: 0.5rem;
-  border: none;
-  resize: none;
-  background-color: transparent;
-}
-
 .note-header {
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.note-footer {
+.note-header-2 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   font-size: x-small;
   padding: 1px 5px;
 }
-.delete-icon {
+
+.md-icon {
   cursor: pointer;
+  font-size: x-small;
+  padding: 2px;
 }
-.delete-icon:hover {
+
+.md-icon:hover {
   color: #bababa;
 }
+.md-icon.md-icon-normal {
+  font-size: medium;
+}
+
 .search {
   display: flex;
   align-items: center;

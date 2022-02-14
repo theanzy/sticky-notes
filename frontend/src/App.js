@@ -72,15 +72,21 @@ function App() {
     storeDarkMode();
   }, [darkModeOn]);
 
+  const filteredNotes = () => {
+    return notes.filter((note) => {
+      const div = document.createElement('div');
+      div.innerHTML = note.content;
+      const text = div.textContent || div.innerText || '';
+      return text.toLocaleLowerCase().includes(searchText);
+    });
+  };
   return (
     <div className={darkModeOn ? 'dark-mode' : ''}>
       <div className='container'>
         <Header checked={darkModeOn} toggleDarkMode={setDarkModeOn} />
         <Search handleSearchNote={setSearchText} />
         <NoteList
-          notes={notes.filter((note) =>
-            note.content.toLocaleLowerCase().includes(searchText)
-          )}
+          notes={filteredNotes()}
           handleAddNote={addNote}
           handleDeleteNote={deleteNote}
           handleNoteUpdated={handleNoteUpdated}

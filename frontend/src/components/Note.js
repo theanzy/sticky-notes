@@ -4,22 +4,13 @@ import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import debounce from 'lodash/debounce';
 import Editor from './Editor/Editor';
 import './Colors.css';
-const Note = ({
-  id,
-  content,
-  date,
-  color,
-  handleDeleteNote,
-  handleNoteUpdated,
-}) => {
+const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
 
   const updateContent = (content) => {
     debouncedSaveNote({
-      id: id,
-      date: date,
+      ...note,
       content: content,
-      color: color,
     });
   };
 
@@ -32,31 +23,29 @@ const Note = ({
 
   const changeColor = (newColor) => {
     handleNoteUpdated({
-      id: id,
-      date: date,
-      content: content,
+      ...note,
       color: newColor,
     });
   };
 
   return (
-    <div className={`note ${color}`}>
-      <div className={`note-header ${color}-header`}>
+    <div className={`note ${note.color}`}>
+      <div className={`note-header ${note.color}-header`}>
         <MdClose
-          onClick={() => handleDeleteNote(id)}
+          onClick={() => handleDeleteNote(note.id)}
           className='md-icon'
           size='1.3em'
         />
         <MeatBallMenu
           onSelectedItem={changeColor}
           items={items}
-          selectedItem={color}
+          selectedItem={note.color}
         />
       </div>
       <div className='note-header-2'>
-        <small>{date}</small>
+        <small>{note.date}</small>
       </div>
-      <Editor htmlContent={content} onContentChange={updateContent} />
+      <Editor htmlContent={note.content} onContentChange={updateContent} />
     </div>
   );
 };

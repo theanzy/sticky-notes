@@ -1,0 +1,108 @@
+.sidebar {
+  width: 200px;
+  background-color: #cccccc;
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  margin-right: 30px;
+  outline: 1px solid black;
+}
+
+.folders-title {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: #353535;
+  color: white;
+}
+
+.folders-title span {
+  margin-left: 5px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  color: #0cc5f3;
+}
+
+.add-new-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  outline: 1px solid #929292;
+  background-color: #f0f0f0;
+}
+
+.add-new-item:focus-within {
+  background-color: #ffffff;
+}
+
+.new-item-text {
+  font-size: small;
+  border: none;
+  padding-right: 10px;
+  align-self: flex-start;
+  width: 100%;
+  background-color: transparent;
+}
+
+.new-item-text:focus {
+  outline: none;
+}
+.sidebar .show-all-items {
+  padding: 3px;
+}
+
+.sidebar .item {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar .item span {
+  padding-left: 5px;
+}
+
+.sidebar .delete-item {
+  color: #a71a1a;
+  padding-right: 5px;
+}
+.sidebar .delete-item:hover {
+  cursor: pointer;
+  color: #f89797;
+}
+.sidebar .item:focus-within {
+  background-color: #eaeaea;
+}
+
+.sidebar .item-text {
+  border: none;
+  background-color: transparent;
+  display: block;
+  font-size: small;
+  padding: 5px;
+  width: 95%;
+  text-decoration: none;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.sidebar .item.active {
+  background-color: #eaeaea;
+  outline: 1px solid #929292;
+}
+
+.sidebar .item:hover:not(.active) {
+  background-color: #eaeaea;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 500px) {
+  .sidebar {
+    width: 0;
+  }
+}

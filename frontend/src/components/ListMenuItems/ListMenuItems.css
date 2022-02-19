@@ -1,15 +1,18 @@
 .list-menu-items {
   display: flex;
   position: absolute;
-  right: 0;
-  height: 22px;
+  right: -2px;
+  top: -8px;
   background-color: white;
+  border-radius: 2px;
 }
 
 .list-menu-items .menu-item {
+  align-self: center;
   text-decoration: none;
   display: block;
   margin: 1px;
+  height: 30px;
 }
 
 .list-menu-items input[type='radio'] {

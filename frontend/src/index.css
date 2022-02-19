@@ -27,9 +27,19 @@ code {
 }
 
 .container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.side {
+  flex: 1 15%;
+}
+
+.main {
+  flex: 1 85%;
   max-width: 960px;
   margin-right: auto;
-  margin-left: auto;
   padding-right: 15px;
   padding-left: 15px;
   padding-bottom: 20px;
@@ -54,12 +64,16 @@ textarea:focus {
   min-height: 170px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   white-space: pre-wrap;
 }
 
 .note.new {
   background-color: #67d7cc;
+  justify-content: space-around;
+}
+
+.note.new .note-header {
+  flex-direction: row-reverse;
 }
 
 .note:focus-within {
@@ -72,12 +86,14 @@ textarea:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 2px;
 }
+
 .note-header-2 {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  font-size: x-small;
+  font-size: smaller;
   padding: 1px 5px;
 }
 

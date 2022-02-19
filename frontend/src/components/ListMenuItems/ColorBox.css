@@ -1,8 +1,9 @@
 .color-box {
   box-sizing: content-box;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
+
 .highlight {
-  outline: 1px solid rgb(0, 255, 255);
+  outline: 2px solid #00a2ff;
 }

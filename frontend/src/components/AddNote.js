@@ -17,7 +17,7 @@ const AddNote = ({ handleAddNote }) => {
 
   return (
     <div className='note new'>
-      <div className='note-header-2'>
+      <div className='note-header'>
         <MdAdd className='md-icon md-icon-normal' onClick={handleSave} />
       </div>
       <Editor

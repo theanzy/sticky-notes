@@ -12,10 +12,7 @@ const NoteList = ({
       {notes.map((note) => (
         <Note
           key={note.id}
-          id={note.id}
-          content={note.content}
-          date={note.date}
-          color={note.color}
+          note={note}
           handleDeleteNote={handleDeleteNote}
           handleNoteUpdated={handleNoteUpdated}
         />

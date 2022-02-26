@@ -33,12 +33,11 @@ code {
 }
 
 .side {
-  flex: 1 15%;
+  flex: 0 15%;
 }
 
 .main {
   flex: 1 85%;
-  max-width: 960px;
   margin-right: auto;
   padding-right: 15px;
   padding-left: 15px;

@@ -38,6 +38,7 @@
 
 .dropdown-content {
   display: none;
+  position: relative;
   z-index: 2;
 }
 

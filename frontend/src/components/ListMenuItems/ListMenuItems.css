@@ -8,11 +8,8 @@
 }
 
 .list-menu-items .menu-item {
-  align-self: center;
-  text-decoration: none;
-  display: block;
-  margin: 1px;
-  height: 30px;
+  display: flex;
+  padding: 2px;
 }
 
 .list-menu-items input[type='radio'] {
@@ -21,6 +18,5 @@
 
 .list-menu-items label {
   display: inline-block;
-  font-family: Arial;
   cursor: pointer;
 }

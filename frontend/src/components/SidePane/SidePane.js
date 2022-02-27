@@ -1,4 +1,5 @@
 import './SidePane.css';
+import { Droppable } from 'react-beautiful-dnd';
 import {
   MdOutlineFolder,
   MdOutlineCreateNewFolder,
@@ -72,22 +73,37 @@ const SidePane = ({
       </div>
 
       <div>
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={`item ${selectedItemId === item.id ? 'active' : ''}`}>
-            <input
-              onClick={() => onItemSelected(item)}
-              className='item-text'
-              onChange={(e) => onItemChanged(e, item)}
-              value={item.name}
-            />
-            <MdOutlineDeleteForever
-              className='delete-item'
-              size={20}
-              onClick={() => onItemDeleted(item)}
-            />
-          </div>
+        {items.map((item, index) => (
+          <Droppable
+            key={`folder_${item.id}`}
+            droppableId={`folder_${item.id}`}
+            type='notes-list'>
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className='item-container'>
+                <div
+                  className={`item ${
+                    selectedItemId === item.id ? 'active' : ''
+                  }`}>
+                  <input
+                    onClick={() => onItemSelected(item)}
+                    className='item-text'
+                    onChange={(e) => onItemChanged(e, item)}
+                    value={item.name}
+                  />
+                  <MdOutlineDeleteForever
+                    className='delete-item'
+                    size={20}
+                    onClick={() => onItemDeleted(item)}
+                  />
+                </div>
+
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         ))}
       </div>
     </div>

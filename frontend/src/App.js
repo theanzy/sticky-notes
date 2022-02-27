@@ -6,7 +6,7 @@ import Header from './components/Header';
 import { saveNotes, getNotes, getFolders, saveFolders } from './data/NotesData';
 import { getDarkMode, saveDarkMode } from './data/DarkModeData';
 import SidePane from './components/SidePane/SidePane';
-
+import { DragDropContext } from 'react-beautiful-dnd';
 function App() {
   const [notes, setNotes] = useState([]);
   const [folderState, setFolderState] = useState({
@@ -28,6 +28,7 @@ function App() {
 
   useEffect(() => {
     const storeNotes = async () => {
+      console.log('saving notes');
       await saveNotes(notes);
     };
     storeNotes();
@@ -48,7 +49,7 @@ function App() {
       await saveFolders(folderState.folders);
     };
     storeFolders();
-  }, [folderState.folders]);
+  }, [folderState]);
 
   const addNote = (content) => {
     const date = new Date();
@@ -69,6 +70,7 @@ function App() {
   };
 
   const handleNoteUpdated = (updatedNote) => {
+    console.log('updated', updatedNote);
     setNotes(
       notes.map((note) => (note.id === updatedNote.id ? updatedNote : note))
     );
@@ -149,36 +151,57 @@ function App() {
     );
   };
 
+  const changeFolder = (noteId, folderId) => {
+    const note = notes.find((note) => note.id === noteId);
+    if (note && note.folderId !== folderId) {
+      handleNoteUpdated({ ...note, folderId: folderId });
+    }
+  };
+
+  const handleOnDragEnd = (result) => {
+    // draggableId, -- item
+    // destination droppableId -- list  with index
+    // source droppableId -- list with index
+    const { source, draggableId, destination } = result;
+    if (!destination) return;
+    const folderIdMatch = destination.droppableId.match(/folder_(.*)/);
+    if (source.droppableId === 'notes-list' && folderIdMatch) {
+      changeFolder(draggableId, folderIdMatch[1]);
+    }
+  };
+
   return (
-    <div className={`container ${darkModeOn ? 'dark-mode' : ''}`}>
-      <div className='side'>
-        <SidePane
-          items={folderState.folders}
-          selectedItemId={folderState.selectedFolderId}
-          selectedItemUpdated={(item) =>
-            setFolderState({
-              folders: foldersChanged(item),
-              selectedFolderId: item.id,
-            })
-          }
-          handleAddItem={addNewFolder}
-          handleDeleteItem={handleDeleteFolder}
-          showAllItems={() =>
-            setFolderState({ ...folderState, selectedFolderId: '' })
-          }
-        />
+    <DragDropContext onDragEnd={handleOnDragEnd}>
+      <div className={`container ${darkModeOn ? 'dark-mode' : ''}`}>
+        <div className='side'>
+          <SidePane
+            items={folderState.folders}
+            selectedItemId={folderState.selectedFolderId}
+            selectedItemUpdated={(item) =>
+              setFolderState({
+                folders: foldersChanged(item),
+                selectedFolderId: item.id,
+              })
+            }
+            handleAddItem={addNewFolder}
+            handleDeleteItem={handleDeleteFolder}
+            showAllItems={() =>
+              setFolderState({ ...folderState, selectedFolderId: '' })
+            }
+          />
+        </div>
+        <div className='main'>
+          <Header checked={darkModeOn} toggleDarkMode={setDarkModeOn} />
+          <Search handleSearchNote={handleSearchNote} />
+          <NoteList
+            notes={filteredNotes()}
+            handleAddNote={addNote}
+            handleDeleteNote={deleteNote}
+            handleNoteUpdated={handleNoteUpdated}
+          />
+        </div>
       </div>
-      <div className='main'>
-        <Header checked={darkModeOn} toggleDarkMode={setDarkModeOn} />
-        <Search handleSearchNote={handleSearchNote} />
-        <NoteList
-          notes={filteredNotes()}
-          handleAddNote={addNote}
-          handleDeleteNote={deleteNote}
-          handleNoteUpdated={handleNoteUpdated}
-        />
-      </div>
-    </div>
+    </DragDropContext>
   );
 }
 

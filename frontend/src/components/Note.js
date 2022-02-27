@@ -4,7 +4,7 @@ import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import debounce from 'lodash/debounce';
 import Editor from './Editor/Editor';
 import './Colors.css';
-const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
+const Note = ({ note, handleDeleteNote, handleNoteUpdated, isDragging }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
 
   const updateContent = (content) => {
@@ -29,7 +29,7 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   };
 
   return (
-    <div className={`note ${note.color}`}>
+    <div>
       <div className={`note-header ${note.color}-header`}>
         <MdClose
           onClick={() => handleDeleteNote(note.id)}
@@ -42,10 +42,14 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
           selectedItem={note.color}
         />
       </div>
-      <div className='note-header-2'>
-        <small>{note.date}</small>
-      </div>
-      <Editor htmlContent={note.content} onContentChange={updateContent} />
+      {!isDragging && (
+        <div>
+          <div className='note-header-2'>
+            <small>{note.date}</small>
+          </div>
+          <Editor htmlContent={note.content} onContentChange={updateContent} />
+        </div>
+      )}
     </div>
   );
 };

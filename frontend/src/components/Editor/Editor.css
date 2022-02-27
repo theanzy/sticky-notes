@@ -1,6 +1,7 @@
 .editor-container {
   flex: 1 1 auto;
   display: flex;
+  cursor: context-menu;
 }
 .editor-container .quill {
   width: 100%;

@@ -1,7 +1,8 @@
 .meatball-menu {
   position: relative;
   width: 30px;
-  height: 5px;
+  height: 17px;
+  cursor: pointer;
 }
 
 .dots {

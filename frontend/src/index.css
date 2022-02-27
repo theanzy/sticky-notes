@@ -55,7 +55,6 @@ code {
 .note {
   background-color: #fef68a;
   border-radius: 3px;
-  min-height: 170px;
   display: flex;
   flex-direction: column;
   white-space: pre-wrap;
@@ -64,6 +63,13 @@ code {
 .note.new {
   background-color: #67d7cc;
 }
+
+.note.dragging {
+  opacity: 0.5;
+  outline: none;
+  max-height: 20px;
+}
+
 .new-note-content {
   flex: 1 1 auto;
 }

@@ -11,7 +11,7 @@
 .dark-mode .sidebar {
   background-color: #111111;
   color: #dadada;
-  outline: 1px solid #5f5f5f;
+  outline: 1px solid #3f3f3f;
 }
 
 .folders-title {
@@ -53,9 +53,9 @@
 }
 
 .dark-mode .add-new-item {
-  outline: 1px solid #dadada;
+  outline: none;
   color: #dadada;
-  background-color: #474747;
+  background-color: #272727;
 }
 
 .add-new-item:focus-within {
@@ -63,7 +63,7 @@
 }
 
 .dark-mode .add-new-item:focus-within {
-  background-color: #585858;
+  background-color: #353535;
 }
 
 .new-item-text {
@@ -109,7 +109,7 @@
 }
 
 .dark-mode .sidebar .item-container.dragging-over {
-  background-color: #a8a8a8;
+  background-color: #686868;
   outline: 1px solid #575757;
 }
 
@@ -144,7 +144,7 @@
 }
 
 .dark-mode .sidebar .item:focus-within {
-  background-color: #585858;
+  background-color: #3a3a3a;
   color: #dadada;
 }
 
@@ -171,7 +171,7 @@
 }
 
 .dark-mode .sidebar .item.active {
-  background-color: #575757;
+  background-color: #353535;
   outline: none;
 }
 
@@ -180,7 +180,7 @@
 }
 
 .dark-mode .sidebar .item.active:hover {
-  background-color: #858585;
+  background-color: #404040;
 }
 
 .sidebar .item:hover:not(.active) {
@@ -188,7 +188,7 @@
   cursor: pointer;
 }
 .dark-mode .sidebar .item:hover:not(.active) {
-  background-color: #858585;
+  background-color: #353535;
 }
 
 @media only screen and (max-width: 500px) {

@@ -77,12 +77,15 @@ const SidePane = ({
           <Droppable
             key={`folder_${item.id}`}
             droppableId={`folder_${item.id}`}
-            type='notes-list'>
+            type='notes-list'
+            direction='horizontal'>
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className='item-container'>
+                className={`item-container ${
+                  snapshot.isDraggingOver ? 'dragging-over' : ''
+                }`}>
                 <div
                   className={`item ${
                     selectedItemId === item.id ? 'active' : ''

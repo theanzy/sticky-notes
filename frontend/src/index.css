@@ -67,7 +67,7 @@ code {
 .note.dragging {
   opacity: 0.5;
   outline: none;
-  max-height: 20px;
+  max-height: 10px;
 }
 
 .new-note-content {
@@ -90,12 +90,17 @@ code {
   padding: 2px;
 }
 
-.note-header-2 {
+.note:focus-within .note-footer {
+  display: none;
+}
+
+.note-footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   font-size: smaller;
   padding: 1px 5px;
+  height: 24px;
 }
 
 .md-icon {

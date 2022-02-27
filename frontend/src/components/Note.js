@@ -44,10 +44,10 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated, isDragging }) => {
       </div>
       {!isDragging && (
         <div>
-          <div className='note-header-2'>
-            <small>{note.date}</small>
-          </div>
           <Editor htmlContent={note.content} onContentChange={updateContent} />
+          <div className='note-footer'>
+            Last updated on <small>{note.updatedDate}</small>
+          </div>
         </div>
       )}
     </div>

@@ -55,7 +55,8 @@ function App() {
     const date = new Date();
     const newNote = {
       id: nanoid(),
-      date: date.toLocaleDateString(),
+      createdDate: date.toLocaleDateString(),
+      updatedDate: date.toLocaleDateString(),
       content: content,
       color: 'yellow',
       folderId: folderState.selectedFolderId,
@@ -70,11 +71,15 @@ function App() {
   };
 
   const handleNoteUpdated = (updatedNote) => {
-    console.log('updated', updatedNote);
+    const date = new Date();
+    const noteToUpdate = {
+      ...updatedNote,
+      updatedDate: date.toLocaleDateString(),
+    };
     setNotes(
-      notes.map((note) => (note.id === updatedNote.id ? updatedNote : note))
+      notes.map((note) => (note.id === noteToUpdate.id ? noteToUpdate : note))
     );
-    saveNote(updatedNote);
+    saveNote(noteToUpdate);
   };
   const saveNote = (note) => {
     // save note to ...
@@ -153,8 +158,12 @@ function App() {
 
   const changeFolder = (noteId, folderId) => {
     const note = notes.find((note) => note.id === noteId);
+    console.log(`original folder = ${note.folderId}`);
     if (note && note.folderId !== folderId) {
-      handleNoteUpdated({ ...note, folderId: folderId });
+      handleNoteUpdated({
+        ...note,
+        folderId: folderId,
+      });
     }
   };
 
@@ -162,11 +171,15 @@ function App() {
     // draggableId, -- item
     // destination droppableId -- list  with index
     // source droppableId -- list with index
+    console.log(result);
     const { source, draggableId, destination } = result;
     if (!destination) return;
     const folderIdMatch = destination.droppableId.match(/folder_(.*)/);
     if (source.droppableId === 'notes-list' && folderIdMatch) {
+      console.log(`change folder from ${draggableId} tot ${folderIdMatch[1]}`);
       changeFolder(draggableId, folderIdMatch[1]);
+    } else {
+      console.log('not match');
     }
   };
 

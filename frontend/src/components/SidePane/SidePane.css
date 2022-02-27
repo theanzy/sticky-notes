@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   padding: 5px;
-  background-color: #353535;
+  background-color: #000000;
   color: white;
 }
 
@@ -53,6 +53,7 @@
 .new-item-text:focus {
   outline: none;
 }
+
 .sidebar .show-all-items {
   padding: 3px;
   height: 2.5rem;
@@ -60,13 +61,21 @@
 
 .sidebar .item-container {
   display: block;
-  height: 2rem;
 }
 
 .sidebar .item {
   height: 2rem;
   display: flex;
   align-items: center;
+}
+
+.sidebar .item-container.dragging-over {
+  max-height: fit-content;
+  background-color: #cff1fa;
+}
+
+.sidebar .item-container.dragging-over > div {
+  max-height: 2rem;
 }
 
 .sidebar .item span {

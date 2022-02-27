@@ -16,7 +16,7 @@
 
 /* Snow Theme */
 .editor-container .ql-snow.ql-toolbar {
-  visibility: collapse;
+  display: none;
   border: none;
   padding: 1px;
   align-self: center;
@@ -28,7 +28,7 @@
 }
 
 .editor-container:focus-within .ql-snow.ql-snow.ql-toolbar {
-  visibility: visible;
+  display: flex;
 }
 
 .editor-container .ql-toolbar .ql-stroke {

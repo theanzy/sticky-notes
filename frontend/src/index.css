@@ -19,7 +19,7 @@ code {
 }
 
 .dark-mode {
-  background-color: black;
+  background-color: #272727;
 }
 
 .dark-mode h1 {
@@ -119,16 +119,36 @@ code {
 .search {
   display: flex;
   align-items: center;
-  background-color: rgb(233, 233, 233);
+  background-color: #fee8ff;
   border-radius: 10px;
   padding: 5px;
   margin-bottom: 1.5em;
 }
 
+.dark-mode .search {
+  background-color: #464646;
+  color: #dadada;
+}
+
+.search:focus-within {
+  outline: 1px solid #ddaaff;
+}
+
+.dark-mode .search:focus-within {
+  outline: 1px solid #b4b4b4;
+}
+
 .search input {
   border: none;
-  background-color: rgb(233, 233, 233);
+  background-color: transparent;
   width: 100%;
+}
+
+.dark-mode .search input {
+  color: #dadada;
+}
+.dark-mode .search input::placeholder {
+  color: #dadada;
 }
 
 .search input:focus {

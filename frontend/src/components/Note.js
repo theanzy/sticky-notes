@@ -5,8 +5,8 @@ import debounce from 'lodash/debounce';
 import Editor from './Editor/Editor';
 import './Colors.css';
 const Note = ({ note, handleDeleteNote, handleNoteUpdated, isDragging }) => {
+  console.log('note render');
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
-  const [state, setState] = useState({ ...note });
 
   const debouncedSaveNote = useMemo(
     () => debounce(handleNoteUpdated, 1500),
@@ -20,39 +20,37 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated, isDragging }) => {
   }, [debouncedSaveNote]);
 
   const updateContent = (content) => {
-    const newState = { ...state, content };
-    setState(newState);
-    debouncedSaveNote(newState);
+    const newNote = { ...note, content };
+    debouncedSaveNote(newNote);
   };
 
   const changeColor = (newColor) => {
-    const newState = {
-      ...state,
+    const newNote = {
+      ...note,
       color: newColor,
     };
-    setState(newState);
-    handleNoteUpdated(newState);
+    handleNoteUpdated(newNote);
   };
 
   return (
-    <div className={`note-container ${state.color}`}>
-      <div className={`note-header ${state.color}-header`}>
+    <div className={`note-container ${note.color}`}>
+      <div className={`note-header ${note.color}-header`}>
         <MdClose
-          onClick={() => handleDeleteNote(state.id)}
+          onClick={() => handleDeleteNote(note.id)}
           className='md-icon'
           size='1.3em'
         />
         <MeatBallMenu
           onSelectedItem={changeColor}
           items={items}
-          selectedItem={state.color}
+          selectedItem={note.color}
         />
       </div>
       {!isDragging && (
         <div>
-          <Editor htmlContent={state.content} onContentChange={updateContent} />
+          <Editor htmlContent={note.content} onContentChange={updateContent} />
           <div className='note-footer'>
-            Last updated on <small>{state.updatedDate}</small>
+            Last updated on <small>{note.updatedDate}</small>
           </div>
         </div>
       )}

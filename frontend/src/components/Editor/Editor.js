@@ -37,16 +37,13 @@ const editorformats = [
  * Simple editor component that takes placeholder text as a prop
  */
 const Editor = ({ placeholder = '', htmlContent = '', onContentChange }) => {
-  const [content, setContent] = useState(htmlContent);
+  console.log('Editor render');
   return (
     <div className='editor-container cyan'>
       <ReactQuill
         theme='snow'
-        onChange={(html) => {
-          setContent(html);
-          onContentChange(html);
-        }}
-        value={content}
+        onChange={onContentChange}
+        value={htmlContent}
         modules={editorModules}
         formats={editorformats}
         bounds={'.app'}

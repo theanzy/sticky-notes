@@ -6,7 +6,7 @@ import {
   MdOutlineDeleteForever,
   MdOutlineNotes,
 } from 'react-icons/md';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 const SidePane = ({
   items,
   selectedItemId,
@@ -43,7 +43,7 @@ const SidePane = ({
   const onItemDeleted = (item) => {
     handleDeleteItem(item);
   };
-
+  console.log('side pane render');
   return (
     <div className='sidebar'>
       <div className='folders-title'>
@@ -113,4 +113,4 @@ const SidePane = ({
   );
 };
 
-export default memo(SidePane);
+export default SidePane;

@@ -103,6 +103,7 @@ const reducer = (state, action) => {
 };
 
 function App() {
+  console.log('app render');
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {

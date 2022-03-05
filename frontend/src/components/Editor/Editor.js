@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './Editor.css';
@@ -36,16 +37,16 @@ const editorformats = [
  * Simple editor component that takes placeholder text as a prop
  */
 const Editor = ({ placeholder = '', htmlContent = '', onContentChange }) => {
-  const handleChange = (html) => {
-    onContentChange(html);
-  };
-
+  const [content, setContent] = useState(htmlContent);
   return (
     <div className='editor-container cyan'>
       <ReactQuill
         theme='snow'
-        onChange={handleChange}
-        value={htmlContent}
+        onChange={(html) => {
+          setContent(html);
+          onContentChange(html);
+        }}
+        value={content}
         modules={editorModules}
         formats={editorformats}
         bounds={'.app'}

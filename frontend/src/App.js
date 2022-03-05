@@ -3,14 +3,26 @@ import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';
 import Header from './components/Header';
-import { saveNotes, getNotes, getFolders, saveFolders } from './data/NotesData';
+import {
+  saveNotes,
+  getNotes,
+  getFolders,
+  saveFolders,
+  addFolder,
+  deleteFolder,
+  updateNote,
+  deleteNote,
+  addNote,
+} from './data/NotesData';
 import { getDarkMode, saveDarkMode } from './data/DarkModeData';
 import SidePane from './components/SidePane/SidePane';
 import { DragDropContext } from 'react-beautiful-dnd';
+import LoadSpinner from './components/LoadSpinner/LoadSpinner';
 
 const initialState = {
   darkModeOn: false,
   isLoading: true,
+  isSaving: false,
   folders: [],
   selectedFolderId: '',
   notes: [],
@@ -20,6 +32,8 @@ const initialState = {
 const ActionTypes = {
   FETCH_SUCCESS: 'FETCH_SUCCESS',
   FETCH_ERROR: 'FETCH_ERROR',
+  SAVING: 'SAVING',
+  SAVE_ERROR: 'SAVE_ERROR',
   UPDATE_NOTES: 'UPDATE_NOTES',
   ADD_NEW_FOLDER: 'ADD_NEW_FOLDER',
   DELETE_FOLDER: 'DELETE_FOLDER',
@@ -39,13 +53,19 @@ const reducer = (state, action) => {
         notes: action.payload.notes,
         isLoading: false,
       };
+    case ActionTypes.SAVING:
+      return {
+        ...state,
+        isSaving: true,
+      };
     case ActionTypes.UPDATE_NOTES:
-      return { ...state, notes: action.payload };
+      return { ...state, notes: action.payload, isSaving: false };
     case ActionTypes.ADD_NEW_FOLDER:
       return {
         ...state,
         folders: action.payload.folders,
         selectedFolderId: action.payload.selectedFolderId,
+        isSaving: false,
       };
     case ActionTypes.SEARCH:
       return {
@@ -58,6 +78,8 @@ const reducer = (state, action) => {
         ...state,
         folders: action.payload.folders,
         notes: action.payload.notes,
+        selectedFolderId: action.payload.selectedFolderId,
+        isSaving: false,
       };
     case ActionTypes.SELECTED_FOLDER_CHANGED:
       return {
@@ -76,7 +98,7 @@ const reducer = (state, action) => {
         darkModeOn: !state.darkModeOn,
       };
     default:
-      break;
+      return state;
   }
 };
 
@@ -103,13 +125,10 @@ function App() {
     fetchSavedState();
   }, []);
 
-  useEffect(() => {
-    const storeNotes = async () => {
-      console.log('saving notes');
-      await saveNotes(state.notes);
-    };
-    storeNotes();
-  }, [state.notes]);
+  const storeNotes = async (notes) => {
+    console.log('saving all notes local', notes);
+    await saveNotes(notes);
+  };
 
   useEffect(() => {
     const storeFolders = async () => {
@@ -118,11 +137,17 @@ function App() {
     storeFolders();
   }, [state.folders]);
 
-  const updateNotesState = (notes) => {
-    dispatch({ type: ActionTypes.UPDATE_NOTES, payload: notes });
+  const withSaveAsync = async (callback, ...args) => {
+    dispatch({ type: ActionTypes.SAVING });
+    await callback(args);
   };
 
-  const addNote = (content) => {
+  const updateNotesState = (notes) => {
+    dispatch({ type: ActionTypes.UPDATE_NOTES, payload: notes });
+    storeNotes(notes);
+  };
+
+  const handleAddNote = async (content) => {
     const date = new Date();
     const newNote = {
       id: nanoid(),
@@ -132,31 +157,28 @@ function App() {
       color: 'yellow',
       folderId: state.selectedFolderId,
     };
+    await withSaveAsync(addNote, newNote);
     updateNotesState([...state.notes, newNote]);
   };
 
-  const deleteNote = (id) => {
+  const handleDeleteNote = async (id) => {
+    await withSaveAsync(deleteNote, id);
     const updatedNotes = state.notes.filter((note) => note.id !== id);
     updateNotesState(updatedNotes);
   };
-
-  const handleNoteUpdated = (updatedNote) => {
+  const handleNoteUpdated = async (updatedNote) => {
+    console.log('handle note updated');
     const date = new Date();
     const noteToUpdate = {
       ...updatedNote,
       updatedDate: date.toLocaleDateString(),
     };
+    await withSaveAsync(updateNote, noteToUpdate);
     updateNotesState(
       state.notes.map((note) =>
         note.id === noteToUpdate.id ? noteToUpdate : note
       )
     );
-    saveNote(noteToUpdate);
-  };
-
-  const saveNote = (note) => {
-    // save note to ...
-    console.log('saving', note);
   };
 
   useEffect(() => {
@@ -180,13 +202,14 @@ function App() {
     });
   };
 
-  const addNewFolder = (folderName) => {
+  const addNewFolder = async (folderName) => {
     const date = new Date();
     const newFolder = {
       id: nanoid(),
       name: folderName,
       date: date.toLocaleDateString(),
     };
+    await withSaveAsync(addFolder, newFolder);
     const folders = [...state.folders, newFolder];
     dispatch({
       type: ActionTypes.ADD_NEW_FOLDER,
@@ -204,14 +227,33 @@ function App() {
     });
   };
 
-  const handleDeleteFolder = (folder) => {
-    const folders = state.folders.filter((folder_) => folder_.id !== folder.id);
+  const selectNewFolderId = (currentId, deleteId) => {
+    let newId = '';
+    if (currentId !== deleteId && currentId.length > 0) {
+      newId = currentId;
+    }
+    return newId;
+  };
+
+  const handleDeleteFolder = async (deletedFolder) => {
+    await withSaveAsync(deleteFolder, deletedFolder);
+
+    const folders = state.folders.filter(
+      (folder_) => folder_.id !== deletedFolder.id
+    );
     const notes = state.notes.map((note) =>
-      note.folderId === folder.id ? { ...note, folderId: '' } : note
+      note.folderId === deletedFolder.id ? { ...note, folderId: '' } : note
     );
     dispatch({
       type: ActionTypes.DELETE_FOLDER,
-      payload: { folders: folders, notes: notes },
+      payload: {
+        folders: folders,
+        notes: notes,
+        selectedFolderId: selectNewFolderId(
+          state.selectedFolderId,
+          deletedFolder.id
+        ),
+      },
     });
   };
 
@@ -259,37 +301,45 @@ function App() {
     dispatch({ type: ActionTypes.TOGGLE_DARK_MODE });
   };
 
+  const LoadText = () => {
+    if (state.isLoading) {
+      return 'Loading ...';
+    }
+    if (state.isSaving) {
+      return 'Saving ...';
+    }
+  };
+
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
-      {state.isLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>
-          <div className='side'>
-            <SidePane
-              items={state.folders}
-              selectedItemId={state.selectedFolderId}
-              selectedItemUpdated={handleSelectedFolderChanged}
-              handleAddItem={addNewFolder}
-              handleDeleteItem={handleDeleteFolder}
-              showAllItems={handleShowAllItems}
-            />
-          </div>
-          <div className='main'>
-            <Header
-              checked={state.darkModeOn}
-              toggleDarkMode={handleToggleDarkMode}
-            />
-            <Search handleSearchNote={handleSearchNote} />
-            <NoteList
-              notes={filteredNotes()}
-              handleAddNote={addNote}
-              handleDeleteNote={deleteNote}
-              handleNoteUpdated={handleNoteUpdated}
-            />
-          </div>
+      {state.isLoading || state.isSaving ? (
+        <LoadSpinner text={LoadText()} />
+      ) : null}
+      <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>
+        <div className='side'>
+          <SidePane
+            items={state.folders}
+            selectedItemId={state.selectedFolderId}
+            selectedItemUpdated={handleSelectedFolderChanged}
+            handleAddItem={addNewFolder}
+            handleDeleteItem={handleDeleteFolder}
+            showAllItems={handleShowAllItems}
+          />
         </div>
-      )}
+        <div className='main'>
+          <Header
+            checked={state.darkModeOn}
+            toggleDarkMode={handleToggleDarkMode}
+          />
+          <Search handleSearchNote={handleSearchNote} />
+          <NoteList
+            notes={filteredNotes()}
+            handleAddNote={handleAddNote}
+            handleDeleteNote={handleDeleteNote}
+            handleNoteUpdated={handleNoteUpdated}
+          />
+        </div>
+      </div>
     </DragDropContext>
   );
 }

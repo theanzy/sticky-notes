@@ -18,10 +18,6 @@ code {
   justify-content: space-between;
 }
 
-.dark-mode {
-  background-color: #272727;
-}
-
 .dark-mode h1 {
   color: white;
 }
@@ -30,6 +26,11 @@ code {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  background-color: #fff9fd;
+}
+
+.dark-mode {
+  background-color: #272727;
 }
 
 .side {
@@ -38,9 +39,8 @@ code {
 
 .main {
   flex: 1 85%;
-  margin-right: auto;
   padding-right: 15px;
-  padding-left: 15px;
+  padding-left: 25px;
   padding-bottom: 20px;
   padding-top: 0px;
   min-height: 100vh;
@@ -52,8 +52,12 @@ code {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
+.note-container {
+  border-radius: 3px;
+}
+
 .note {
-  background-color: #fef68a;
+  background-color: transparent;
   border-radius: 3px;
   display: flex;
   flex-direction: column;

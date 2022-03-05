@@ -16,7 +16,7 @@ const ListMenuItems = ({ items, onSelectedClick, selectedItem }) => {
           <label
             data-color={item}
             htmlFor={item}
-            onClick={(e) => onSelectedClick(item)}>
+            onClick={() => onSelectedClick(item)}>
             <ColorBox color={item} selectedColor={selectedItem} />
           </label>
         </div>

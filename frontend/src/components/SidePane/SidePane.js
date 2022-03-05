@@ -6,7 +6,7 @@ import {
   MdOutlineDeleteForever,
   MdOutlineNotes,
 } from 'react-icons/md';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 const SidePane = ({
   items,
   selectedItemId,
@@ -73,7 +73,7 @@ const SidePane = ({
       </div>
 
       <div>
-        {items.map((item, index) => (
+        {items.map((item) => (
           <Droppable
             key={`folder_${item.id}`}
             droppableId={`folder_${item.id}`}
@@ -113,4 +113,4 @@ const SidePane = ({
   );
 };
 
-export default SidePane;
+export default memo(SidePane);

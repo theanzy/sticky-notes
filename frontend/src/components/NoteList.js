@@ -22,7 +22,7 @@ const NoteList = ({
             <Draggable key={note.id} draggableId={note.id} index={i}>
               {(providedDrag, snapshotDrag) => (
                 <div
-                  className={`note ${note.color} ${
+                  className={`note ${
                     snapshotDrag.isDragging ? 'dragging' : ''
                   }`}
                   ref={providedDrag.innerRef}

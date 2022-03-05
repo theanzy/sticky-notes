@@ -1,69 +1,30 @@
 import './SidePane.css';
 import { Droppable } from 'react-beautiful-dnd';
-import {
-  MdOutlineFolder,
-  MdOutlineCreateNewFolder,
-  MdOutlineDeleteForever,
-  MdOutlineNotes,
-} from 'react-icons/md';
-import { useState } from 'react';
+import { MdOutlineFolder, MdOutlineNotes } from 'react-icons/md';
+import AddNewItem from './AddNewItem';
+import EditableItem from './EditableItem';
+
 const SidePane = ({
   items,
   selectedItemId,
   selectedItemUpdated,
+  onItemSelected,
   handleAddItem,
   handleDeleteItem,
   showAllItems,
 }) => {
-  const [folderName, setFolderName] = useState('');
-  const addNewFolder = () => {
-    if (folderName.length > 0) {
-      handleAddItem(folderName);
-      setFolderName('');
-    }
-  };
-
-  const onItemChanged = (e, item) => {
-    const updatedItem = { ...item, name: e.target.value };
+  const onItemChanged = (item, value) => {
+    const updatedItem = { ...item, name: value };
     selectedItemUpdated(updatedItem);
   };
 
-  const onItemSelected = (item) => {
-    if (item.id !== selectedItemId) {
-      selectedItemUpdated(item);
-    }
-  };
-
-  const handleKeyUp = (e) => {
-    if (e.keyCode === 13) {
-      addNewFolder();
-    }
-  };
-
-  const onItemDeleted = (item) => {
-    handleDeleteItem(item);
-  };
   console.log('side pane render');
   return (
     <div className='sidebar'>
       <div className='folders-title'>
         <MdOutlineFolder size={20} /> <span>Folders</span>
       </div>
-      <div className='add-new-item'>
-        <input
-          type='text'
-          value={folderName}
-          placeholder='Add new folder'
-          className='new-item-text'
-          onKeyUp={(e) => handleKeyUp(e)}
-          onChange={(e) => setFolderName(e.target.value)}
-        />
-        <MdOutlineCreateNewFolder
-          className='clickable'
-          size={20}
-          onClick={addNewFolder}
-        />
-      </div>
+      <AddNewItem onAddNewItem={handleAddItem} />
       <div
         className={`show-all-items item ${
           selectedItemId.length === 0 ? 'active' : ''
@@ -86,23 +47,13 @@ const SidePane = ({
                 className={`item-container ${
                   snapshot.isDraggingOver ? 'dragging-over' : ''
                 }`}>
-                <div
-                  className={`item ${
-                    selectedItemId === item.id ? 'active' : ''
-                  }`}>
-                  <input
-                    onClick={() => onItemSelected(item)}
-                    className='item-text'
-                    onChange={(e) => onItemChanged(e, item)}
-                    value={item.name}
-                  />
-                  <MdOutlineDeleteForever
-                    className='delete-item'
-                    size={20}
-                    onClick={() => onItemDeleted(item)}
-                  />
-                </div>
-
+                <EditableItem
+                  selectedItemId={selectedItemId}
+                  item={item}
+                  onItemSelected={(item) => onItemSelected(item.id)}
+                  onValueChanged={(value) => onItemChanged(item, value)}
+                  onItemDeleted={() => handleDeleteItem(item)}
+                />
                 {provided.placeholder}
               </div>
             )}

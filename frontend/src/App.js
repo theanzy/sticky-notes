@@ -13,6 +13,7 @@ import {
   updateNote,
   deleteNote,
   addNote,
+  updateFolder,
 } from './data/NotesData';
 import { getDarkMode, saveDarkMode } from './data/DarkModeData';
 import SidePane from './components/SidePane/SidePane';
@@ -38,6 +39,7 @@ const ActionTypes = {
   ADD_NEW_FOLDER: 'ADD_NEW_FOLDER',
   DELETE_FOLDER: 'DELETE_FOLDER',
   SELECTED_FOLDER_CHANGED: 'SELECTED_FOLDER_CHANGED',
+  ON_FOLDER_SELECTED: 'ON_FOLDER_SELECTED',
   SEARCH: 'SEARCH',
   SHOW_ALL_NOTES: 'SHOW_ALL_NOTES',
   TOGGLE_DARK_MODE: 'TOGGLE_DARK_MODE',
@@ -85,6 +87,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         folders: action.payload.folders,
+        selectedFolderId: action.payload.selectedFolderId,
+        isSaving: false,
+      };
+    case ActionTypes.ON_FOLDER_SELECTED:
+      return {
+        ...state,
         selectedFolderId: action.payload.selectedFolderId,
       };
     case ActionTypes.SHOW_ALL_NOTES:
@@ -276,8 +284,16 @@ function App() {
       });
     }
   };
-
-  const handleSelectedFolderChanged = (item) => {
+  const handleFolderSelected = (folderId) => {
+    dispatch({
+      type: ActionTypes.ON_FOLDER_SELECTED,
+      payload: {
+        selectedFolderId: folderId,
+      },
+    });
+  };
+  const handleSelectedFolderChanged = async (item) => {
+    await withSaveAsync(updateFolder, item);
     dispatch({
       type: ActionTypes.SELECTED_FOLDER_CHANGED,
       payload: {
@@ -322,6 +338,7 @@ function App() {
             items={state.folders}
             selectedItemId={state.selectedFolderId}
             selectedItemUpdated={handleSelectedFolderChanged}
+            onItemSelected={handleFolderSelected}
             handleAddItem={addNewFolder}
             handleDeleteItem={handleDeleteFolder}
             showAllItems={handleShowAllItems}

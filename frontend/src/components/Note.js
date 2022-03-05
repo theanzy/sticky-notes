@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { MdClose } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import debounce from 'lodash/debounce';

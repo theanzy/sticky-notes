@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';

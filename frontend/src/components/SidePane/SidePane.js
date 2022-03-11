@@ -1,3 +1,4 @@
+import React from 'react';
 import './SidePane.css';
 import { Droppable } from 'react-beautiful-dnd';
 import { MdOutlineFolder, MdOutlineNotes } from 'react-icons/md';

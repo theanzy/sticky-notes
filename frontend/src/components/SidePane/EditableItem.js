@@ -1,3 +1,4 @@
+import React, { useRef, useState } from 'react';
 import './SidePane.css';
 import {
   MdOutlineDeleteForever,
@@ -5,7 +6,6 @@ import {
   MdOutlineCheck,
   MdOutlineClose,
 } from 'react-icons/md';
-import { useRef, useState } from 'react';
 const EditableItem = ({
   selectedItemId,
   item,

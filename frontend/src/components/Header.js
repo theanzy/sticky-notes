@@ -1,3 +1,4 @@
+import React from 'react';
 import ThemeToggleButton from './ThemeToggleButton';
 
 const Header = ({ checked, toggleDarkMode, onSelectedItem }) => {

@@ -1,5 +1,6 @@
 import AddNote from './AddNote';
 import Note from './Note';
+import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 const NoteList = ({
   notes,

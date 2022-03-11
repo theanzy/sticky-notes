@@ -1,3 +1,4 @@
+import React from 'react';
 import './LoadSpinner.css';
 const LoadSpinner = ({ text }) => {
   return (

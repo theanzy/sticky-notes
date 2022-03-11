@@ -1,3 +1,4 @@
+import React from 'react';
 import './ColorBox.css';
 import '../Colors.css';
 const ColorBox = ({ color, selectedColor }) => {

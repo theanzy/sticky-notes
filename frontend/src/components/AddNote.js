@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Editor from './Editor/Editor';
 import { MdAdd } from 'react-icons/md';
 

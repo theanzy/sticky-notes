@@ -1,3 +1,4 @@
+import React from 'react';
 import ListMenuItems from '../ListMenuItems/ListMenuItems';
 import './MeatBallMenu.css';
 const MeatBallMenu = ({ onSelectedItem, items, selectedItem }) => {

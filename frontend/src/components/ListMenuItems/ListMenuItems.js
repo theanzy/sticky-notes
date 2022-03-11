@@ -1,3 +1,4 @@
+import React from 'react';
 import './ListMenuItems.css';
 import './ColorBox';
 import ColorBox from './ColorBox';

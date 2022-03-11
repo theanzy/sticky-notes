@@ -1,5 +1,5 @@
 import './SidePane.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { MdOutlineCreateNewFolder } from 'react-icons/md';
 
 const AddNewItem = ({ onAddNewItem }) => {

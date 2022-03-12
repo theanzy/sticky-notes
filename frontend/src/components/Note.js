@@ -4,14 +4,24 @@ import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import debounce from 'lodash/debounce';
 import Editor from './Editor/Editor';
 import './Colors.css';
-const Note = ({ note, handleDeleteNote, handleNoteUpdated, isDragging }) => {
-  console.log('note render');
+import { useDrag } from 'react-dnd';
+import { DragTypes } from '../data/Constants';
+const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
 
   const debouncedSaveNote = useMemo(
     () => debounce(handleNoteUpdated, 1500),
     [handleNoteUpdated]
   );
+
+  const [{ opacity }, dragRef] = useDrag({
+    type: DragTypes.Note,
+    item: { noteId: note.id },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+      opacity: monitor.isDragging() ? 0.7 : 1.0,
+    }),
+  });
 
   useEffect(() => {
     return () => {
@@ -33,8 +43,8 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated, isDragging }) => {
   };
 
   return (
-    <div className={`note-container ${note.color}`}>
-      <div className={`note-header ${note.color}-header`}>
+    <div className={`note-container ${note.color}`} style={{ opacity }}>
+      <div ref={dragRef} className={`note-header ${note.color}-header`}>
         <MdClose
           onClick={() => handleDeleteNote(note.id)}
           className='md-icon'
@@ -46,14 +56,12 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated, isDragging }) => {
           selectedItem={note.color}
         />
       </div>
-      {!isDragging && (
-        <div>
-          <Editor htmlContent={note.content} onContentChange={updateContent} />
-          <div className='note-footer'>
-            Last updated on <small>{note.updatedDate}</small>
-          </div>
+      <div>
+        <Editor htmlContent={note.content} onContentChange={updateContent} />
+        <div className='note-footer'>
+          Last updated on <small>{note.updatedDate}</small>
         </div>
-      )}
+      </div>
     </div>
   );
 };

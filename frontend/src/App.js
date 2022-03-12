@@ -17,8 +17,10 @@ import {
 } from './data/NotesData';
 import { getDarkMode, saveDarkMode } from './data/DarkModeData';
 import SidePane from './components/SidePane/SidePane';
-import { DragDropContext } from 'react-beautiful-dnd';
 import LoadSpinner from './components/LoadSpinner/LoadSpinner';
+import { ActionTypes } from './data/Constants';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const initialState = {
   darkModeOn: false,
@@ -28,21 +30,6 @@ const initialState = {
   selectedFolderId: '',
   notes: [],
   searchText: '',
-};
-
-const ActionTypes = {
-  FETCH_SUCCESS: 'FETCH_SUCCESS',
-  FETCH_ERROR: 'FETCH_ERROR',
-  SAVING: 'SAVING',
-  SAVE_ERROR: 'SAVE_ERROR',
-  UPDATE_NOTES: 'UPDATE_NOTES',
-  ADD_NEW_FOLDER: 'ADD_NEW_FOLDER',
-  DELETE_FOLDER: 'DELETE_FOLDER',
-  SELECTED_FOLDER_CHANGED: 'SELECTED_FOLDER_CHANGED',
-  ON_FOLDER_SELECTED: 'ON_FOLDER_SELECTED',
-  SEARCH: 'SEARCH',
-  SHOW_ALL_NOTES: 'SHOW_ALL_NOTES',
-  TOGGLE_DARK_MODE: 'TOGGLE_DARK_MODE',
 };
 
 const reducer = (state, action) => {
@@ -111,7 +98,6 @@ const reducer = (state, action) => {
 };
 
 function App() {
-  console.log('app render');
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -266,16 +252,7 @@ function App() {
     });
   };
 
-  const handleOnDragEnd = (result) => {
-    const { source, draggableId, destination } = result;
-    if (!destination) return;
-    const folderIdMatch = destination.droppableId.match(/folder_(.*)/);
-    if (source.droppableId === 'notes-list' && folderIdMatch) {
-      changeNoteFolder(draggableId, folderIdMatch[1]);
-    }
-  };
-
-  const changeNoteFolder = (noteId, folderId) => {
+  const changeNoteFolder = ({ folderId, noteId }) => {
     const note = state.notes.find((note) => note.id === noteId);
     if (note && note.folderId !== folderId) {
       handleNoteUpdated({
@@ -284,6 +261,7 @@ function App() {
       });
     }
   };
+
   const handleFolderSelected = (folderId) => {
     dispatch({
       type: ActionTypes.ON_FOLDER_SELECTED,
@@ -292,6 +270,7 @@ function App() {
       },
     });
   };
+
   const handleSelectedFolderChanged = async (item) => {
     await withSaveAsync(updateFolder, item);
     dispatch({
@@ -328,7 +307,7 @@ function App() {
   };
 
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
+    <DndProvider backend={HTML5Backend}>
       {state.isLoading || state.isSaving ? (
         <LoadSpinner text={LoadText()} />
       ) : null}
@@ -342,6 +321,7 @@ function App() {
             handleAddItem={addNewFolder}
             handleDeleteItem={handleDeleteFolder}
             showAllItems={handleShowAllItems}
+            onDropItem={changeNoteFolder}
           />
         </div>
         <div className='main'>
@@ -358,7 +338,7 @@ function App() {
           />
         </div>
       </div>
-    </DragDropContext>
+    </DndProvider>
   );
 }
 

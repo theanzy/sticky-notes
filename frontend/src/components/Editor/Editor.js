@@ -37,7 +37,6 @@ const editorformats = [
  * Simple editor component that takes placeholder text as a prop
  */
 const Editor = ({ placeholder = '', htmlContent = '', onContentChange }) => {
-  console.log('Editor render');
   return (
     <div className='editor-container cyan'>
       <ReactQuill

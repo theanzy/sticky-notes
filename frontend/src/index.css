@@ -92,6 +92,7 @@ code {
   align-items: center;
   justify-content: space-between;
   padding: 2px;
+  cursor: grab;
 }
 
 .note:focus-within .note-footer {

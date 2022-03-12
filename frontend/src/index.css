@@ -89,8 +89,8 @@ code {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px;
   cursor: grab;
+  height: 25px;
 }
 
 .note:focus-within .note-footer {
@@ -98,18 +98,18 @@ code {
 }
 
 .note-footer {
-  display: flex;
-  align-items: center;
+  display: none;
+  align-items: flex-end;
   justify-content: center;
   font-size: smaller;
   padding: 1px 5px;
-  height: 34px;
+  height: 46px;
 }
 
 .md-icon {
   cursor: pointer;
   font-size: x-small;
-  padding: 2px;
+  padding: 2px 4px;
 }
 
 .md-icon:hover {

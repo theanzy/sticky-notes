@@ -9,7 +9,7 @@ const DeleteModal = ({ shown, title, subtitle, onDelete, onClosed }) => {
         onClick={(e) => {
           e.stopPropagation();
         }}>
-        <MdOutlineClose onClick={onClosed} className='close' />
+        <MdOutlineClose onClick={onClosed} fontSize={20} className='close' />
         <div className='title'>{title}</div>
         <div className='subtitle'>{subtitle}</div>
         <div>

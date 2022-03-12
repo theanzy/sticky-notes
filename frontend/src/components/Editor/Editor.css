@@ -16,13 +16,13 @@
 
 /* Snow Theme */
 .editor-container .ql-snow.ql-toolbar {
-  display: none;
+  display: flex;
   border: none;
   padding: 1px;
   align-self: center;
   justify-self: flex-end;
+  align-self: center;
   align-items: center;
-  max-height: 36px;
 }
 
 .editor-container:focus-within {
@@ -31,6 +31,15 @@
 
 .editor-container:focus-within .ql-snow.ql-snow.ql-toolbar {
   display: flex;
+}
+
+.new .editor-container .ql-snow.ql-snow.ql-toolbar {
+  display: flex;
+}
+
+.editor-container .ql-snow.ql-toolbar button,
+.editor-container .ql-snow .ql-toolbar button {
+  margin: 2px 3px;
 }
 
 .editor-container .ql-toolbar .ql-stroke {
@@ -58,7 +67,7 @@
 }
 
 .editor-container .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label {
-  color: #fff;
+  color: #030101;
 }
 
 .ql-snow .ql-picker-options .ql-picker-item:hover {
@@ -84,6 +93,7 @@
   border: none;
   overflow-y: hidden;
 }
+
 .editor-container .ql-editor:focus {
   overflow-y: auto;
 }

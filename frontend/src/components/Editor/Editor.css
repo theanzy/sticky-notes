@@ -21,6 +21,8 @@
   padding: 1px;
   align-self: center;
   justify-self: flex-end;
+  align-items: center;
+  max-height: 36px;
 }
 
 .editor-container:focus-within {

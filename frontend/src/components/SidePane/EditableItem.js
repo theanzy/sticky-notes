@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import './SidePane.css';
 import {
   MdOutlineDeleteForever,
@@ -8,6 +8,7 @@ import {
 } from 'react-icons/md';
 import { useDrop } from 'react-dnd';
 import { DragTypes } from '../../data/Constants';
+import DeleteModal from '../Modal/DeleteModal';
 const EditableItem = ({
   selectedItemId,
   item,
@@ -16,8 +17,16 @@ const EditableItem = ({
   onValueChanged,
   onDropItem,
 }) => {
-  const [state, setState] = useState({ readOnly: true, text: item.name });
-  const inputRef = useRef(undefined);
+  const [state, setState] = useState({
+    readOnly: true,
+    text: item.name,
+    showModal: false,
+  });
+
+  const toggleModal = () => {
+    setState((prev) => ({ ...prev, showModal: !prev.showModal }));
+  };
+
   const [{ isDraggingOver }, dropRef] = useDrop({
     accept: DragTypes.Note,
     drop: (dest) => {
@@ -27,6 +36,14 @@ const EditableItem = ({
       isDraggingOver: monitor.isOver(),
     }),
   });
+
+  const onBlur = () => {
+    setState({
+      readOnly: true,
+      text: item.name,
+    });
+  };
+
   return (
     <div
       key={item.id}
@@ -36,11 +53,10 @@ const EditableItem = ({
         className={`item ${selectedItemId === item.id ? 'active' : ''}`}
         onClick={() => {
           onItemSelected(item);
-          inputRef.current.focus();
         }}>
         <input
-          ref={inputRef}
           className='item-text'
+          onBlur={onBlur}
           onChange={(e) => setState({ ...state, text: e.target.value })}
           value={state.text}
           readOnly={state.readOnly}
@@ -67,7 +83,6 @@ const EditableItem = ({
           </Fragment>
         ) : (
           <Fragment>
-            {' '}
             <MdOutlineEdit
               className='item-icon'
               size={20}
@@ -78,7 +93,14 @@ const EditableItem = ({
             <MdOutlineDeleteForever
               className='item-icon'
               size={20}
-              onClick={onItemDeleted}
+              onClick={toggleModal}
+            />
+            <DeleteModal
+              shown={state.showModal}
+              title='Delete folder'
+              subtitle='Are you sure to delete folder?'
+              onDelete={onItemDeleted}
+              onClosed={toggleModal}
             />
           </Fragment>
         )}

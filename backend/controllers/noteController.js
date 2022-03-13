@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const { HttpError } = require('../helper/customError');
 
 // @desc    Get notes
 // @route   GET /api/notes
@@ -11,6 +12,10 @@ const getNotes = asyncHandler(async (req, res) => {
 // @route   POST /api/notes
 // @access  Private
 const setNote = asyncHandler(async (req, res) => {
+  if (req.body.color === 'red') {
+    // res.status(400);
+    throw new HttpError(['red color not allowed', 'dumb error'], 400);
+  }
   res.status(200).json({ message: 'Add a note' });
 });
 

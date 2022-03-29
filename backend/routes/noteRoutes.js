@@ -18,22 +18,16 @@ const validateError = (req, res, next) => {
     next();
   }
 };
-
-router
-  .route('/')
-  .get(getNotes)
-  .post(
-    [
-      body('content', 'content does not exists').exists(),
-      body('color')
-        .exists()
-        .withMessage('color does not exist')
-        .isIn(['yellow', 'red', 'green', 'blue', 'orange', 'pink', 'gray'])
-        .withMessage('wrong color'),
-      validateError,
-    ],
-    setNote
-  );
-router.route('/:id').delete(deleteNote).put(updateNote);
+const validateNote = [
+  body('content', 'content does not exists').exists(),
+  body('color')
+    .exists()
+    .withMessage('color does not exist')
+    .isIn(['yellow', 'red', 'green', 'blue', 'orange', 'pink', 'gray'])
+    .withMessage('wrong color'),
+  validateError,
+];
+router.route('/').get(getNotes).post(validateNote, setNote);
+router.route('/:id').delete(deleteNote).put(validateNote, updateNote);
 
 module.exports = router;

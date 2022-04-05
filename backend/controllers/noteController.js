@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const { HttpError } = require('../helper/customError');
+const { getUser } = require('../helper/user');
 const Note = require('../models/noteModel');
 
 // @desc    Get notes
@@ -17,6 +17,7 @@ const setNote = asyncHandler(async (req, res) => {
   const note = await Note.create({
     content: req.body.content,
     color: req.body.color,
+    user: getUser(),
   });
   res.status(200).json(note);
 });
@@ -35,7 +36,7 @@ const deleteNote = asyncHandler(async (req, res) => {
   res.status(200).json({ id: req.params.id });
 });
 
-// @desc    Delete a note
+// @desc    Edit a note
 // @route   PUT /api/notes/:id
 // @access  Private
 const updateNote = asyncHandler(async (req, res) => {

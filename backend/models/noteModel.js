@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
-const noteSchema = mongoose.Schema(
+const Schema = mongoose.Schema;
+const noteSchema = Schema(
   {
     content: {
       type: String,
@@ -9,6 +9,13 @@ const noteSchema = mongoose.Schema(
     color: {
       type: String,
       required: [true, 'Please add color'],
+    },
+    user: {
+      type: String,
+    },
+    folder: {
+      type: Schema.Types.ObjectId,
+      ref: 'Folder',
     },
   },
   {

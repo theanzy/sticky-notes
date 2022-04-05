@@ -1,7 +1,7 @@
 const express = require('express');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
 const router = express.Router();
-
+const { validateModelError } = require('../middleware/errorMiddleware');
 const {
   getNotes,
   setNote,
@@ -9,15 +9,6 @@ const {
   updateNote,
 } = require('../controllers/noteController');
 
-const validateError = (req, res, next) => {
-  const error = validationResult(req).formatWith(({ msg }) => msg);
-  const hasError = !error.isEmpty();
-  if (hasError) {
-    res.status(422).json({ errors: error.array() });
-  } else {
-    next();
-  }
-};
 const validateNote = [
   body('content', 'content does not exists').exists(),
   body('color')
@@ -25,8 +16,9 @@ const validateNote = [
     .withMessage('color does not exist')
     .isIn(['yellow', 'red', 'green', 'blue', 'orange', 'pink', 'gray'])
     .withMessage('wrong color'),
-  validateError,
+  validateModelError,
 ];
+
 router.route('/').get(getNotes).post(validateNote, setNote);
 router.route('/:id').delete(deleteNote).put(validateNote, updateNote);
 

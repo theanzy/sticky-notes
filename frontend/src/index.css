@@ -16,6 +16,26 @@ code {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-direction: column;
+}
+
+.header-main {
+  width: 90%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.header-auth {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  background-color: #f9eaff;
+}
+
+.dark-mode .header-auth {
+  background-color: #000000;
 }
 
 .dark-mode h1 {
@@ -39,11 +59,14 @@ code {
 
 .main {
   flex: 1 85%;
-  padding-right: 15px;
-  padding-left: 25px;
   padding-bottom: 20px;
   padding-top: 0px;
   min-height: 100vh;
+}
+
+.content {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .notes-list {
@@ -220,4 +243,44 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+button {
+  border: none;
+  border-radius: 4px;
+  padding: 5px;
+  width: 150px;
+  cursor: pointer;
+  margin: 10px 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+button.outline-white {
+  width: fit-content;
+  background-color: #ffffff;
+  color:#000000;
+}
+button.outline-white:hover {
+  background-color: #f1f1f1;
+  color:#161616;
+}
+
+button.delete {
+  padding: 10px;
+  background-color: #d81d1d;
+  color: white;
+}
+
+button.delete:hover {
+  background-color: #972a2a;
+  color: white;
+}
+
+button.cancel {
+  padding: 10px;
+  background-color: #ffc107;
+}
+button.cancel:hover {
+  background-color: #be8f00;
 }

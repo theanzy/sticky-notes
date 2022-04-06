@@ -3,6 +3,8 @@ import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';
 import Header from './components/Header';
+import { Auth0Provider } from '@auth0/auth0-react';
+
 import {
   saveNotes,
   getNotes,
@@ -305,40 +307,51 @@ function App() {
       return 'Saving ...';
     }
   };
-
+  // eslint-disable-next-line no-undef
+  const AUTH0_DOMAIN = process.env.REACT_APP_AUTH0_DOMAIN;
+  // eslint-disable-next-line no-undef
+  const AUTH0_CLIENTID = process.env.REACT_APP_AUTH0_CLIENTID;
   return (
-    <DndProvider backend={HTML5Backend}>
-      {state.isLoading || state.isSaving ? (
-        <LoadSpinner text={LoadText()} />
-      ) : null}
-      <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>
-        <div className='side'>
-          <SidePane
-            items={state.folders}
-            selectedItemId={state.selectedFolderId}
-            selectedItemUpdated={handleSelectedFolderChanged}
-            onItemSelected={handleFolderSelected}
-            handleAddItem={addNewFolder}
-            handleDeleteItem={handleDeleteFolder}
-            showAllItems={handleShowAllItems}
-            onDropItem={changeNoteFolder}
-          />
+    <Auth0Provider
+      domain={AUTH0_DOMAIN}
+      clientId={AUTH0_CLIENTID}
+      redirectUri={window.location.origin}>
+      <DndProvider backend={HTML5Backend}>
+        {state.isLoading || state.isSaving ? (
+          <LoadSpinner text={LoadText()} />
+        ) : null}
+        <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>
+          <div className='side'>
+            <SidePane
+              items={state.folders}
+              selectedItemId={state.selectedFolderId}
+              selectedItemUpdated={handleSelectedFolderChanged}
+              onItemSelected={handleFolderSelected}
+              handleAddItem={addNewFolder}
+              handleDeleteItem={handleDeleteFolder}
+              showAllItems={handleShowAllItems}
+              onDropItem={changeNoteFolder}
+            />
+          </div>
+
+          <div className='main'>
+            <Header
+              checked={state.darkModeOn}
+              toggleDarkMode={handleToggleDarkMode}
+            />
+            <div className='content'>
+              <Search handleSearchNote={handleSearchNote} />
+              <NoteList
+                notes={filteredNotes()}
+                handleAddNote={handleAddNote}
+                handleDeleteNote={handleDeleteNote}
+                handleNoteUpdated={handleNoteUpdated}
+              />
+            </div>
+          </div>
         </div>
-        <div className='main'>
-          <Header
-            checked={state.darkModeOn}
-            toggleDarkMode={handleToggleDarkMode}
-          />
-          <Search handleSearchNote={handleSearchNote} />
-          <NoteList
-            notes={filteredNotes()}
-            handleAddNote={handleAddNote}
-            handleDeleteNote={handleDeleteNote}
-            handleNoteUpdated={handleNoteUpdated}
-          />
-        </div>
-      </div>
-    </DndProvider>
+      </DndProvider>
+    </Auth0Provider>
   );
 }
 

@@ -12,7 +12,7 @@ const DeleteModal = ({ shown, title, subtitle, onDelete, onClosed }) => {
         <MdOutlineClose onClick={onClosed} fontSize={20} className='close' />
         <div className='title'>{title}</div>
         <div className='subtitle'>{subtitle}</div>
-        <div>
+        <div className='btn-group'>
           <button type='button' className='delete' onClick={onDelete}>
             Delete
           </button>

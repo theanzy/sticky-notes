@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const router = express.Router();
 const { validateModelError } = require('../middleware/errorMiddleware');
+const { checkJwt } = require('../middleware/authMiddleware');
 const {
   getFolders,
   addFolder,
@@ -14,7 +15,13 @@ const validateFolder = [
   validateModelError,
 ];
 
-router.route('/').get(getFolders).post(validateFolder, addFolder);
-router.route('/:id').delete(deleteFolder).put(validateFolder, updateFolder);
+router
+  .route('/')
+  .get(checkJwt, getFolders)
+  .post(checkJwt, validateFolder, addFolder);
+router
+  .route('/:id')
+  .delete(checkJwt, deleteFolder)
+  .put(checkJwt, validateFolder, updateFolder);
 
 module.exports = router;

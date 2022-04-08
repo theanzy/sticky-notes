@@ -8,6 +8,7 @@ const {
   deleteNote,
   updateNote,
 } = require('../controllers/noteController');
+const { checkJwt } = require('../middleware/authMiddleware');
 
 const validateNote = [
   body('content', 'content does not exists').exists(),
@@ -19,7 +20,10 @@ const validateNote = [
   validateModelError,
 ];
 
-router.route('/').get(getNotes).post(validateNote, setNote);
-router.route('/:id').delete(deleteNote).put(validateNote, updateNote);
+router.route('/').get(checkJwt, getNotes).post(checkJwt, validateNote, setNote);
+router
+  .route('/:id')
+  .delete(checkJwt, deleteNote)
+  .put(checkJwt, validateNote, updateNote);
 
 module.exports = router;

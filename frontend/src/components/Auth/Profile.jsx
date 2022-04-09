@@ -1,10 +1,13 @@
 import React from 'react';
 
 const Profile = ({ user }) => {
-  return (
-    <div>
+  return user ? (
+    <>
       <button className='outline-white'>{user.name}</button>
-    </div>
+      <button className='outline-white'>{user.sub}</button>
+    </>
+  ) : (
+    <h1>no user</h1>
   );
 };
 

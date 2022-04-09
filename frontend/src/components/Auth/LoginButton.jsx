@@ -1,12 +1,9 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import { MdOutlineLogin } from 'react-icons/md';
 
-const LoginButton = () => {
-  const { loginWithRedirect } = useAuth0();
-
+const LoginButton = ({ signIn }) => {
   return (
-    <button className='outline-white' onClick={() => loginWithRedirect()}>
+    <button className='outline-white' onClick={signIn}>
       <MdOutlineLogin size={12} style={{ marginRight: '2px' }} /> Log In
     </button>
   );

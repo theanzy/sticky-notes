@@ -67,6 +67,7 @@ const EditableItem = ({
               className='item-icon'
               size={20}
               onClick={() => {
+                console.log('check');
                 if (item.name !== state.text) {
                   onValueChanged(state.text);
                 }

@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList';
 import Search from './components/Search';
 import Header from './components/Header';
-import { Auth0Provider } from '@auth0/auth0-react';
+import AuthContextProvider, { useAuth } from './components/Auth/AuthContext';
 
 import {
   saveNotes,
@@ -101,6 +101,7 @@ const reducer = (state, action) => {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { isAuthLoading } = useAuth();
 
   useEffect(() => {
     const fetchSavedState = async () => {
@@ -300,24 +301,18 @@ function App() {
   };
 
   const LoadText = () => {
-    if (state.isLoading) {
+    if (state.isLoading || isAuthLoading) {
       return 'Loading ...';
     }
     if (state.isSaving) {
       return 'Saving ...';
     }
   };
-  // eslint-disable-next-line no-undef
-  const AUTH0_DOMAIN = process.env.REACT_APP_AUTH0_DOMAIN;
-  // eslint-disable-next-line no-undef
-  const AUTH0_CLIENTID = process.env.REACT_APP_AUTH0_CLIENTID;
+
   return (
-    <Auth0Provider
-      domain={AUTH0_DOMAIN}
-      clientId={AUTH0_CLIENTID}
-      redirectUri={window.location.origin}>
+    <AuthContextProvider>
       <DndProvider backend={HTML5Backend}>
-        {state.isLoading || state.isSaving ? (
+        {state.isLoading || state.isSaving || isAuthLoading ? (
           <LoadSpinner text={LoadText()} />
         ) : null}
         <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>
@@ -351,7 +346,7 @@ function App() {
           </div>
         </div>
       </DndProvider>
-    </Auth0Provider>
+    </AuthContextProvider>
   );
 }
 

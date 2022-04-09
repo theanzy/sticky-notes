@@ -1,13 +1,13 @@
 const asyncHandler = require('express-async-handler');
-const { getUser } = require('../helper/user');
 const Folder = require('../models/folderModel');
+const { mongooseToDto } = require('../helper/mappers');
 
 // @desc    Get folders
 // @route   GET /api/folders
 // @access  Private
 const getFolders = asyncHandler(async (req, res) => {
-  const folders = await Folder.find();
-  res.status(200).json(folders);
+  const folders = await Folder.find({ user: req.user.sub });
+  res.status(200).json(folders.map(mongooseToDto));
 });
 
 // @desc    Add a folder
@@ -16,9 +16,9 @@ const getFolders = asyncHandler(async (req, res) => {
 const addFolder = asyncHandler(async (req, res) => {
   const folder = await Folder.create({
     name: req.body.name,
-    user: getUser(),
+    user: req.user.sub,
   });
-  res.status(200).json(folder);
+  res.status(200).json(mongooseToDto(folder));
 });
 
 // @desc    Delete a folder
@@ -28,7 +28,11 @@ const deleteFolder = asyncHandler(async (req, res) => {
   const folder = await Folder.findById(req.params.id);
   if (!folder) {
     res.status(400);
-    throw new Error('Note not found');
+    throw new Error('Folder not found');
+  }
+  if (folder.user !== req.user.sub) {
+    res.status(401);
+    throw new Error('Unauthorized delete to folder');
   }
   await folder.remove();
 
@@ -42,7 +46,11 @@ const updateFolder = asyncHandler(async (req, res) => {
   const folder = await Folder.findById(req.params.id);
   if (!folder) {
     res.status(400);
-    throw new Error('Note not found');
+    throw new Error('Folder not found');
+  }
+  if (folder.user !== req.user.sub) {
+    res.status(401);
+    throw new Error('Unauthorized update to folder');
   }
   const updatedFolder = await Folder.findByIdAndUpdate(
     req.params.id,
@@ -53,7 +61,7 @@ const updateFolder = asyncHandler(async (req, res) => {
       new: true,
     }
   );
-  res.status(200).json(updatedFolder);
+  res.status(200).json(mongooseToDto(updatedFolder));
 });
 
 module.exports = {

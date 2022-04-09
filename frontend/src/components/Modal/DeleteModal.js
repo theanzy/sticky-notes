@@ -13,7 +13,13 @@ const DeleteModal = ({ shown, title, subtitle, onDelete, onClosed }) => {
         <div className='title'>{title}</div>
         <div className='subtitle'>{subtitle}</div>
         <div className='btn-group'>
-          <button type='button' className='delete' onClick={onDelete}>
+          <button
+            type='button'
+            className='delete'
+            onClick={() => {
+              onClosed();
+              onDelete();
+            }}>
             Delete
           </button>
           <button type='button' className='cancel' onClick={onClosed}>

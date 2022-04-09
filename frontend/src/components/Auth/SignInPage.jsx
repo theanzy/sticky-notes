@@ -1,4 +1,9 @@
 import React from 'react';
+import LoadSpinner from '../LoadSpinner/LoadSpinner';
 export const SignInPage = () => {
-  return <div>Signing in...</div>;
+  return (
+    <>
+      <LoadSpinner text='Signing in' />
+    </>
+  );
 };

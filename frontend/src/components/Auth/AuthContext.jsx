@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Auth0Settings } from '../../data/Settings';
 import createAuth0Client from '@auth0/auth0-spa-js';
+import { LocalStorageUtil } from '../../data/Helpers';
 
 const AuthContext = createContext({
   isAuthenticated: false,
@@ -19,37 +20,18 @@ const getClientAsync = async () => {
   });
 };
 
-const setWithExpiry = (key, value, timeout) => {
-  const item = {
-    value: value,
-    expiry: new Date().getTime() + timeout,
-  };
-  localStorage.setItem(key, JSON.stringify(item));
-};
-
-const getWithExpiry = (key) => {
-  const itemStr = localStorage.getItem(key);
-  // if the item doesn't exist, return null
-  if (!itemStr) {
-    return null;
-  }
-  const item = JSON.parse(itemStr);
-  const now = new Date();
-  if (now.getTime() > item.expiry) {
-    localStorage.removeItem(key);
-    return null;
-  }
-  return item.value;
-};
-
 export const getAccessToken = async () => {
   let token = null;
   try {
-    const localToken = getWithExpiry('ACCESS_TOKEN');
+    const localToken = LocalStorageUtil.getWithExpiry('ACCESS_TOKEN');
     if (!localToken) {
       const client = await getClientAsync();
       token = await client.getTokenSilently();
-      setWithExpiry('ACCESS_TOKEN', token, 1000 * 60 * 60 * 12);
+      LocalStorageUtil.setWithExpiry(
+        'ACCESS_TOKEN',
+        token,
+        1000 * 60 * 60 * 12
+      );
     } else {
       token = localToken;
     }
@@ -58,7 +40,6 @@ export const getAccessToken = async () => {
   }
   return token;
 };
-
 const AuthContextProvider = ({ children }) => {
   const [state, setState] = useState({
     isAuthenticated: false,

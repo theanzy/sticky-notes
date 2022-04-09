@@ -4,9 +4,11 @@ const colors = require('colors');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const app = express();
 const port = process.env.PORT || 5000;
+var cors = require('cors');
+
 const { connectDB } = require('./config/db');
 connectDB();
-
+app.use(cors());
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

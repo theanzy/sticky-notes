@@ -1,8 +1,13 @@
 const { validationResult } = require('express-validator');
 
+const strIncludes = (str, listOfWords) => {
+  return new RegExp(listOfWords.join('|')).test(str);
+};
+
 const errorHandler = (err, req, res, next) => {
   const statusCode = res.statusCode ? res.statusCode : 500;
-  if (err.message && err.message.includes('No authorization token')) {
+  const jwtErrors = ['No authorization token', 'jwt'];
+  if (err.message && strIncludes(err.message, jwtErrors)) {
     res.status(401);
   } else {
     res.status(statusCode);

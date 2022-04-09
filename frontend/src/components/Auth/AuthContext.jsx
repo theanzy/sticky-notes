@@ -17,6 +17,7 @@ const getClientAsync = async () => {
     domain: Auth0Settings.domain,
     client_id: Auth0Settings.clientId,
     redirect_uri: Auth0Settings.redirectUri,
+    audience: Auth0Settings.audience,
   });
 };
 

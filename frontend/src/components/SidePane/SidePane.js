@@ -18,7 +18,6 @@ const SidePane = ({
     const updatedItem = { ...item, name: value };
     selectedItemUpdated(updatedItem);
   };
-
   return (
     <div className='sidebar'>
       <div className='folders-title'>

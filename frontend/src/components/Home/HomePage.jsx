@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from 'react';
-import { nanoid } from 'nanoid';
 import NoteList from '../NoteList';
 import Search from '../Search';
 import Header from '../Header';
@@ -129,7 +128,8 @@ function HomePage() {
 
   const withSaveAsync = async (callback, ...args) => {
     dispatch({ type: ActionTypes.SAVING });
-    await callback(args);
+    const res = await callback(...args);
+    return res;
   };
 
   const updateNotesState = (notes) => {
@@ -138,11 +138,7 @@ function HomePage() {
   };
 
   const handleAddNote = async (content) => {
-    const date = new Date();
     const newNote = {
-      id: nanoid(),
-      createdDate: date.toLocaleDateString(),
-      updatedDate: date.toLocaleDateString(),
       content: content,
       color: 'yellow',
       folderId: state.selectedFolderId,
@@ -193,19 +189,17 @@ function HomePage() {
   };
 
   const addNewFolder = async (folderName) => {
-    const date = new Date();
-    const newFolder = {
-      id: nanoid(),
+    const res = await withSaveAsync(addFolder, {
       name: folderName,
-      date: date.toLocaleDateString(),
-    };
-    await withSaveAsync(addFolder, newFolder);
-    const folders = [...state.folders, newFolder];
+    });
+    const folders = [...state.folders, res];
+    console.log(folders);
+
     dispatch({
       type: ActionTypes.ADD_NEW_FOLDER,
       payload: {
         folders: folders,
-        selectedFolderId: newFolder.id,
+        selectedFolderId: res.id,
       },
     });
   };
@@ -226,23 +220,18 @@ function HomePage() {
   };
 
   const handleDeleteFolder = async (deletedFolder) => {
-    await withSaveAsync(deleteFolder, deletedFolder);
+    const res = await withSaveAsync(deleteFolder, deletedFolder.id);
 
-    const folders = state.folders.filter(
-      (folder_) => folder_.id !== deletedFolder.id
-    );
+    const folders = state.folders.filter((folder_) => folder_.id !== res.id);
     const notes = state.notes.map((note) =>
-      note.folderId === deletedFolder.id ? { ...note, folderId: '' } : note
+      note.folderId === res.id ? { ...note, folderId: '' } : note
     );
     dispatch({
       type: ActionTypes.DELETE_FOLDER,
       payload: {
         folders: folders,
         notes: notes,
-        selectedFolderId: selectNewFolderId(
-          state.selectedFolderId,
-          deletedFolder.id
-        ),
+        selectedFolderId: selectNewFolderId(state.selectedFolderId, res.id),
       },
     });
   };
@@ -267,12 +256,12 @@ function HomePage() {
   };
 
   const handleSelectedFolderChanged = async (item) => {
-    await withSaveAsync(updateFolder, item);
+    const res = await withSaveAsync(updateFolder, item.id, { name: item.name });
     dispatch({
       type: ActionTypes.SELECTED_FOLDER_CHANGED,
       payload: {
-        folders: foldersChanged(item),
-        selectedFolderId: item.id,
+        folders: foldersChanged(res),
+        selectedFolderId: res.id,
       },
     });
   };

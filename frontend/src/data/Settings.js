@@ -9,3 +9,7 @@ export const Auth0Settings = {
   // eslint-disable-next-line no-undef
   scope: process.env.REACT_APP_AUTH0_SCOPE,
 };
+
+export const API_URL =
+  // eslint-disable-next-line no-undef
+  process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000/api';

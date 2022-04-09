@@ -20,11 +20,12 @@ const EditableItem = ({
   const [state, setState] = useState({
     readOnly: true,
     text: item.name,
-    showModal: false,
   });
 
+  const [showModal, setShowModal] = useState(false);
+
   const toggleModal = () => {
-    setState((prev) => ({ ...prev, showModal: !prev.showModal }));
+    setShowModal((prev) => !prev);
   };
 
   const [{ isDraggingOver }, dropRef] = useDrop({
@@ -38,10 +39,13 @@ const EditableItem = ({
   });
 
   const onBlur = () => {
-    setState({
-      readOnly: true,
-      text: item.name,
-    });
+    // Note onBlur() triggers a setState() hook. Causing it to ignore the checkmark click
+    if (selectedItemId !== item.id) {
+      setState({
+        readOnly: true,
+        text: item.name,
+      });
+    }
   };
 
   return (
@@ -67,7 +71,6 @@ const EditableItem = ({
               className='item-icon'
               size={20}
               onClick={() => {
-                console.log('check');
                 if (item.name !== state.text) {
                   onValueChanged(state.text);
                 }
@@ -97,7 +100,7 @@ const EditableItem = ({
               onClick={toggleModal}
             />
             <DeleteModal
-              shown={state.showModal}
+              shown={showModal}
               title='Delete folder'
               subtitle='Are you sure to delete folder?'
               onDelete={onItemDeleted}

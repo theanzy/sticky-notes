@@ -7,7 +7,7 @@ const AuthContext = createContext({
   isAuthenticated: false,
   signIn: () => {},
   signOut: () => {},
-  isAuthLoading: false,
+  isAuthLoading: true,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -52,7 +52,7 @@ const AuthContextProvider = ({ children }) => {
       const auth0ClientCreated = await getClientAsync();
       setAuth0Client(auth0ClientCreated);
       if (
-        window.location.pathname === '/' &&
+        window.location.pathname === '/signin-callback' &&
         window.location.search.indexOf('code=') > -1
       ) {
         await auth0ClientCreated.handleRedirectCallback();
@@ -76,9 +76,11 @@ const AuthContextProvider = ({ children }) => {
   };
 
   const signOut = () => {
-    setState({ ...state, isAuthenticated: false, isLoading: true });
     localStorage.removeItem('AUTH_TOKEN');
-    getAuth0Client().logout({ returnTo: window.location.origin });
+    getAuth0Client().logout({
+      client_id: Auth0Settings.clientId,
+      returnTo: window.location.origin + '/signout-callback',
+    });
   };
 
   const signIn = () => {

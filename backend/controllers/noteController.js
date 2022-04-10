@@ -1,16 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const Note = require('../models/noteModel');
-const {
-  mongooseToDto,
-  toNoteDto,
-  noteToMongoose,
-} = require('../helper/mappers');
+const { pipe, toNoteDto, noteToMongoose } = require('../helper/mappers');
+
 // @desc    Get notes
 // @route   GET /api/notes
 // @access  Private
 const getNotes = asyncHandler(async (req, res) => {
   const notes = await Note.find({ user: req.user.sub });
-  res.status(200).json(notes.map((note) => toNoteDto(mongooseToDto(note))));
+  res.status(200).json(notes.map(toNoteDto));
 });
 
 // @desc    Add a note
@@ -25,7 +22,7 @@ const setNote = asyncHandler(async (req, res) => {
   });
   const note = await Note.create(data);
   console.log(note);
-  res.status(200).json(toNoteDto(mongooseToDto(note)));
+  res.status(200).json(toNoteDto(note));
 });
 
 // @desc    Delete a note
@@ -69,10 +66,7 @@ const updateNote = asyncHandler(async (req, res) => {
   if (req.body.folder) {
     updateFields.folder = req.body.folder;
   }
-  console.log(updateFields);
   updateFields = noteToMongoose(updateFields);
-  console.log(req.body.folder);
-  console.log(updateFields);
   const updatedNote = await Note.findByIdAndUpdate(
     req.params.id,
     updateFields,
@@ -80,7 +74,7 @@ const updateNote = asyncHandler(async (req, res) => {
       new: true,
     }
   );
-  res.status(200).json(toNoteDto(mongooseToDto(updatedNote)));
+  res.status(200).json(toNoteDto(updatedNote));
 });
 
 module.exports = {

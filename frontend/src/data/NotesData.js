@@ -46,7 +46,6 @@ export const getNotes = async () => {
     method: 'GET',
   });
   if (res.ok) {
-    console.log(res.body);
     return res.body;
   }
   return [];
@@ -69,7 +68,6 @@ export const updateNote = async (id, data) => {
     method: 'PUT',
     data: data,
   });
-
   if (res.ok) {
     return res.body;
   }

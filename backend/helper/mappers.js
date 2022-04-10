@@ -1,15 +1,22 @@
 const mongoose = require('mongoose');
 
-function mongooseToDto(item) {
+const pipe =
+  (...funcs) =>
+  (arg) =>
+    [...funcs].reduce((acc, f) => f(acc), arg);
+
+function mongooseToGenericDto(item) {
   const rawItem = item.toObject({ virtuals: true });
   const { _id, __v, ...cleanItem } = rawItem;
   return cleanItem;
 }
 
-function toNoteDto(note) {
+function changeFolderId(note) {
   const { folder, ...cleanItem } = note;
   return { ...cleanItem, folderId: folder };
 }
+
+const toNoteDto = pipe(mongooseToGenericDto, changeFolderId);
 
 function noteToMongoose(note) {
   const { folder, ...cleanItem } = note;
@@ -20,7 +27,8 @@ function noteToMongoose(note) {
 }
 
 module.exports = {
-  mongooseToDto,
+  pipe,
+  mongooseToGenericDto,
   toNoteDto,
   noteToMongoose,
 };

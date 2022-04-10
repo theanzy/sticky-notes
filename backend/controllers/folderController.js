@@ -1,13 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const Folder = require('../models/folderModel');
-const { mongooseToDto } = require('../helper/mappers');
+const { mongooseToGenericDto } = require('../helper/mappers');
 
 // @desc    Get folders
 // @route   GET /api/folders
 // @access  Private
 const getFolders = asyncHandler(async (req, res) => {
   const folders = await Folder.find({ user: req.user.sub });
-  res.status(200).json(folders.map(mongooseToDto));
+  res.status(200).json(folders.map(mongooseToGenericDto));
 });
 
 // @desc    Add a folder
@@ -18,7 +18,7 @@ const addFolder = asyncHandler(async (req, res) => {
     name: req.body.name,
     user: req.user.sub,
   });
-  res.status(200).json(mongooseToDto(folder));
+  res.status(200).json(mongooseToGenericDto(folder));
 });
 
 // @desc    Delete a folder
@@ -61,7 +61,7 @@ const updateFolder = asyncHandler(async (req, res) => {
       new: true,
     }
   );
-  res.status(200).json(mongooseToDto(updatedFolder));
+  res.status(200).json(mongooseToGenericDto(updatedFolder));
 });
 
 module.exports = {

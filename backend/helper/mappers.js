@@ -13,7 +13,10 @@ function toNoteDto(note) {
 
 function noteToMongoose(note) {
   const { folder, ...cleanItem } = note;
-  return { ...cleanItem, folder: mongoose.Types.ObjectId(folder) };
+  if (folder) {
+    return { ...cleanItem, folder: mongoose.Types.ObjectId(folder) };
+  }
+  return note;
 }
 
 module.exports = {

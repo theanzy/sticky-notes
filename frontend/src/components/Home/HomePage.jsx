@@ -153,13 +153,18 @@ function HomePage() {
   };
 
   const handleAddNote = async (content) => {
-    const newNote = await withSaveAsync(addNote, {
+    const data = {
       content: content,
       color: 'yellow',
-      folder: state.selectedFolderId,
-    });
+    };
+    if (state.selectedFolderId.length > 0) {
+      data.folder = state.selectedFolderId;
+    }
+    const newNote = await withSaveAsync(addNote, data);
     if (newNote) {
       updateNotesState([...state.notes, newNote]);
+    } else {
+      dispatch({ type: ActionTypes.FETCH_ERROR });
     }
   };
 
@@ -173,7 +178,8 @@ function HomePage() {
     }
   };
   const handleNoteUpdated = async (updatedNote) => {
-    const currentNote = state.notes.find((n) => (n.id = updatedNote.id));
+    const currentNote = state.notes.find((n) => n.id === updatedNote.id);
+
     if (currentNote) {
       let data = {};
       if (currentNote.content !== updatedNote.content) {
@@ -190,12 +196,12 @@ function HomePage() {
         updatedNote.id,
         data
       );
+      const mapper = (note) => {
+        return note.id === noteToUpdate.id ? noteToUpdate : note;
+      };
+      const newNotes = state.notes.map(mapper);
       if (noteToUpdate) {
-        updateNotesState(
-          state.notes.map((note) =>
-            note.id === noteToUpdate.id ? noteToUpdate : note
-          )
-        );
+        updateNotesState(newNotes);
       } else {
         dispatch({ type: ActionTypes.FETCH_ERROR });
       }
@@ -203,7 +209,7 @@ function HomePage() {
   };
 
   const filteredNotes = () => {
-    return state.notes.filter((note) => {
+    const notes = state.notes.filter((note) => {
       const div = document.createElement('div');
       div.innerHTML = note.content;
       const text = div.textContent || div.innerText || '';
@@ -214,6 +220,7 @@ function HomePage() {
           : true)
       );
     });
+    return notes;
   };
 
   const addNewFolder = async (folderName) => {

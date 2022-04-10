@@ -65,11 +65,11 @@ export const addNote = async (note) => {
 };
 
 export const updateNote = async (id, data) => {
-  console.log(data);
   const res = await httpWithAuth(`${API_URL}/notes/${id}`, {
     method: 'PUT',
     data: data,
   });
+
   if (res.ok) {
     return res.body;
   }

@@ -5,17 +5,6 @@ const delay = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export const saveNotes = async (notes) => {
-  await delay(500);
-  localStorage.setItem('notes', JSON.stringify(notes));
-};
-
-export const getNotes = async () => {
-  await delay(500);
-  const notes = JSON.parse(localStorage.getItem('notes'));
-  return notes ? notes : [];
-};
-
 export const saveFolders = async (folders) => {
   await delay(500);
   localStorage.setItem('folders', JSON.stringify(folders));
@@ -52,11 +41,56 @@ const withAsyncToken = (http) => {
 
 const httpWithAuth = withAsyncToken(http);
 
+export const getNotes = async () => {
+  const res = await httpWithAuth(`${API_URL}/notes`, {
+    method: 'GET',
+  });
+  if (res.ok) {
+    console.log(res.body);
+    return res.body;
+  }
+  return [];
+};
+
+export const addNote = async (note) => {
+  console.log(note);
+  const res = await httpWithAuth(`${API_URL}/notes`, {
+    method: 'POST',
+    data: note,
+  });
+  if (res.ok) {
+    return res.body;
+  }
+  return null;
+};
+
+export const updateNote = async (id, data) => {
+  console.log(data);
+  const res = await httpWithAuth(`${API_URL}/notes/${id}`, {
+    method: 'PUT',
+    data: data,
+  });
+  if (res.ok) {
+    return res.body;
+  }
+  console.error(res.errors);
+  return null;
+};
+
+export const deleteNote = async (id) => {
+  const res = await httpWithAuth(`${API_URL}/notes/${id}`, {
+    method: 'DELETE',
+  });
+  if (res.ok) {
+    return res.body;
+  }
+  return null;
+};
+
 export const getFolders = async () => {
   const res = await httpWithAuth(`${API_URL}/folders`, {
     method: 'GET',
   });
-  console.log(res);
   if (res.ok) {
     return res.body;
   }
@@ -93,19 +127,4 @@ export const updateFolder = async (id, data) => {
     return res.body;
   }
   return null;
-};
-
-export const updateNote = async (note) => {
-  await delay(500);
-  console.log('update note api', note);
-};
-
-export const deleteNote = async (id) => {
-  await delay(500);
-  console.log('delete note api', id);
-};
-
-export const addNote = async (note) => {
-  await delay(500);
-  console.log('add noew note api', note);
 };

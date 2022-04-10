@@ -10,7 +10,7 @@ const {
 } = require('../controllers/noteController');
 const { checkJwt } = require('../middleware/authMiddleware');
 
-const validateNote = [
+const validateAddNote = [
   body('content', 'content does not exists').exists(),
   body('color')
     .exists()
@@ -20,10 +20,21 @@ const validateNote = [
   validateModelError,
 ];
 
-router.route('/').get(checkJwt, getNotes).post(checkJwt, validateNote, setNote);
+const validateUpdateNote = [
+  body('color')
+    .optional(true)
+    .isIn(['yellow', 'red', 'green', 'blue', 'orange', 'pink', 'gray'])
+    .withMessage('wrong color'),
+  validateModelError,
+];
+
+router
+  .route('/')
+  .get(checkJwt, getNotes)
+  .post(checkJwt, validateAddNote, setNote);
 router
   .route('/:id')
   .delete(checkJwt, deleteNote)
-  .put(checkJwt, validateNote, updateNote);
+  .put(checkJwt, validateUpdateNote, updateNote);
 
 module.exports = router;

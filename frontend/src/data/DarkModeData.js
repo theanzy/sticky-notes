@@ -1,4 +1,4 @@
-export const saveDarkMode = async (darkMode) => {
+export const saveDarkMode = (darkMode) => {
   localStorage.setItem('dark-mode', darkMode);
 };
 

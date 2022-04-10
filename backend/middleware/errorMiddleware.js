@@ -22,7 +22,8 @@ const validateModelError = (req, res, next) => {
   const error = validationResult(req).formatWith(({ msg }) => msg);
   const hasError = !error.isEmpty();
   if (hasError) {
-    res.status(422).json({ errors: error.array() });
+    const data = error.errors.map((e) => e.msg);
+    res.status(422).json({ errors: data });
   } else {
     next();
   }

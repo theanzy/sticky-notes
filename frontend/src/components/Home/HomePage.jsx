@@ -1,9 +1,8 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 import NoteList from '../NoteList';
 import Search from '../Search';
 import Header from '../Header';
 import {
-  saveNotes,
   getNotes,
   getFolders,
   saveFolders,
@@ -14,7 +13,7 @@ import {
   addNote,
   updateFolder,
 } from '../../data/NotesData';
-import { saveDarkMode } from '../../data/DarkModeData';
+import { getDarkMode, saveDarkMode } from '../../data/DarkModeData';
 import SidePane from '../SidePane/SidePane';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
@@ -34,7 +33,6 @@ const reducer = (state, action) => {
     case ActionTypes.FETCH_SUCCESS:
       return {
         ...state,
-        darkModeOn: action.payload.darkModeOn,
         folders: action.payload.folders,
         notes: action.payload.notes,
         isLoading: false,
@@ -43,6 +41,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         isLoading: false,
+        isSaving: false,
       };
     case ActionTypes.SAVING:
       return {
@@ -107,37 +106,34 @@ function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isAuthenticated, isAuthLoading } = useAuth();
 
+  const fetchApiAsync = useCallback(async () => {
+    const darkMode = getDarkMode();
+    dispatch({ type: ActionTypes.INIT_DARK_MODE, payload: darkMode });
+    const [getFoldersResult, getNotesResult] = await Promise.all([
+      getFolders(),
+      getNotes(),
+    ]);
+    dispatch({
+      type: ActionTypes.FETCH_SUCCESS,
+      payload: {
+        folders: getFoldersResult,
+        notes: getNotesResult,
+        isLoading: false,
+      },
+    });
+  }, []);
+
   useEffect(() => {
-    const fetchSavedState = async () => {
-      const [getFoldersResult, getNotesResult] = await Promise.all([
-        getFolders(),
-        getNotes(),
-      ]);
-      dispatch({
-        type: ActionTypes.FETCH_SUCCESS,
-        payload: {
-          folders: getFoldersResult,
-          notes: getNotesResult,
-          isLoading: false,
-        },
-      });
-    };
+    let controller = new AbortController();
     if (isAuthenticated) {
-      fetchSavedState();
+      fetchApiAsync();
     } else {
       dispatch({
         type: ActionTypes.FETCH_ERROR,
-        payload: {
-          isLoading: false,
-        },
       });
     }
+    return () => controller?.abort();
   }, [isAuthenticated]);
-
-  const storeNotes = async (notes) => {
-    console.log('saving all notes local', notes);
-    await saveNotes(notes);
-  };
 
   useEffect(() => {
     const storeFolders = async () => {
@@ -154,45 +150,57 @@ function HomePage() {
 
   const updateNotesState = (notes) => {
     dispatch({ type: ActionTypes.UPDATE_NOTES, payload: notes });
-    storeNotes(notes);
   };
 
   const handleAddNote = async (content) => {
-    const newNote = {
+    const newNote = await withSaveAsync(addNote, {
       content: content,
       color: 'yellow',
-      folderId: state.selectedFolderId,
-    };
-    await withSaveAsync(addNote, newNote);
-    updateNotesState([...state.notes, newNote]);
+      folder: state.selectedFolderId,
+    });
+    if (newNote) {
+      updateNotesState([...state.notes, newNote]);
+    }
   };
 
   const handleDeleteNote = async (id) => {
-    await withSaveAsync(deleteNote, id);
-    const updatedNotes = state.notes.filter((note) => note.id !== id);
-    updateNotesState(updatedNotes);
+    const res = await withSaveAsync(deleteNote, id);
+    if (res) {
+      const updatedNotes = state.notes.filter((note) => note.id !== res.id);
+      updateNotesState(updatedNotes);
+    } else {
+      dispatch({ type: ActionTypes.FETCH_ERROR });
+    }
   };
   const handleNoteUpdated = async (updatedNote) => {
-    console.log('handle note updated');
-    const date = new Date();
-    const noteToUpdate = {
-      ...updatedNote,
-      updatedDate: date.toLocaleDateString(),
-    };
-    await withSaveAsync(updateNote, noteToUpdate);
-    updateNotesState(
-      state.notes.map((note) =>
-        note.id === noteToUpdate.id ? noteToUpdate : note
-      )
-    );
+    const currentNote = state.notes.find((n) => (n.id = updatedNote.id));
+    if (currentNote) {
+      let data = {};
+      if (currentNote.content !== updatedNote.content) {
+        data.content = updatedNote.content;
+      }
+      if (currentNote.color !== updatedNote.color) {
+        data.color = updatedNote.color;
+      }
+      if (!data.content && !data.color) {
+        return;
+      }
+      const noteToUpdate = await withSaveAsync(
+        updateNote,
+        updatedNote.id,
+        data
+      );
+      if (noteToUpdate) {
+        updateNotesState(
+          state.notes.map((note) =>
+            note.id === noteToUpdate.id ? noteToUpdate : note
+          )
+        );
+      } else {
+        dispatch({ type: ActionTypes.FETCH_ERROR });
+      }
+    }
   };
-
-  useEffect(() => {
-    const storeDarkMode = async () => {
-      await saveDarkMode(state.darkModeOn);
-    };
-    storeDarkMode();
-  }, [state.darkModeOn]);
 
   const filteredNotes = () => {
     return state.notes.filter((note) => {
@@ -255,13 +263,26 @@ function HomePage() {
     });
   };
 
-  const changeNoteFolder = ({ folderId, noteId }) => {
+  const updateField = (item, key, value) => {
+    return { ...item, [key]: value };
+  };
+
+  const changeNoteFolder = async ({ folderId, noteId }) => {
     const note = state.notes.find((note) => note.id === noteId);
     if (note && note.folderId !== folderId) {
-      handleNoteUpdated({
-        ...note,
-        folderId: folderId,
-      });
+      const data = { folder: folderId };
+      const updatedNote = await withSaveAsync(updateNote, noteId, data);
+      if (updatedNote) {
+        updateNotesState(
+          state.notes.map((note) =>
+            note.id === updatedNote.id
+              ? updateField(note, 'folderId', updatedNote.folderId)
+              : note
+          )
+        );
+      } else {
+        dispatch({ type: ActionTypes.FETCH_ERROR });
+      }
     }
   };
 
@@ -297,6 +318,7 @@ function HomePage() {
   };
 
   const handleToggleDarkMode = () => {
+    saveDarkMode(!state.darkModeOn);
     dispatch({ type: ActionTypes.TOGGLE_DARK_MODE });
   };
 

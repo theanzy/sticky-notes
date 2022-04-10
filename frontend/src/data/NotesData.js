@@ -1,5 +1,6 @@
 import { API_URL } from './Settings';
-import { getAccessToken } from '../components/Auth/AuthContext';
+import { Auth } from './AuthData';
+
 const delay = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -11,7 +12,8 @@ export const saveNotes = async (notes) => {
 
 export const getNotes = async () => {
   await delay(500);
-  return JSON.parse(localStorage.getItem('notes'));
+  const notes = JSON.parse(localStorage.getItem('notes'));
+  return notes ? notes : [];
 };
 
 export const saveFolders = async (folders) => {
@@ -20,20 +22,19 @@ export const saveFolders = async (folders) => {
 };
 
 /// api
-const http = async (url, config) => {
+const http = async (url, params, accessToken) => {
   const request = new Request(url, {
-    method: config.method,
+    method: params.method,
     headers: {
       'Content-Type': 'application/json',
     },
-    body: config.data ? JSON.stringify(config.data) : undefined,
+    body: params.data ? JSON.stringify(params.data) : undefined,
   });
-  if (config.accessToken) {
-    request.headers.set('authorization', `bearer ${config.accessToken}`);
+  if (accessToken) {
+    request.headers.set('authorization', `bearer ${accessToken}`);
   }
   const response = await fetch(request);
   const body = await response.json();
-  console.log(response);
 
   if (response.ok) {
     return { ok: response.ok, body };
@@ -42,25 +43,30 @@ const http = async (url, config) => {
   }
 };
 
+const withAsyncToken = (http) => {
+  return async (...args) => {
+    const accessToken = await Auth.getAccessToken();
+    return http(...args, accessToken);
+  };
+};
+
+const httpWithAuth = withAsyncToken(http);
+
 export const getFolders = async () => {
-  const accessToken = await getAccessToken();
-  const res = await http(`${API_URL}/folders`, {
+  const res = await httpWithAuth(`${API_URL}/folders`, {
     method: 'GET',
-    accessToken: accessToken,
   });
+  console.log(res);
   if (res.ok) {
-    console.log(res);
     return res.body;
   }
   return [];
 };
 
 export const addFolder = async (folder) => {
-  const accessToken = await getAccessToken();
-  const res = await http(`${API_URL}/folders`, {
+  const res = await httpWithAuth(`${API_URL}/folders`, {
     method: 'POST',
     data: folder,
-    accessToken: accessToken,
   });
   if (res.ok) {
     return res.body;
@@ -69,10 +75,8 @@ export const addFolder = async (folder) => {
 };
 
 export const deleteFolder = async (folderId) => {
-  const accessToken = await getAccessToken();
-  const res = await http(`${API_URL}/folders/${folderId}`, {
+  const res = await httpWithAuth(`${API_URL}/folders/${folderId}`, {
     method: 'DELETE',
-    accessToken: accessToken,
   });
   if (res.ok) {
     return res.body;
@@ -81,16 +85,10 @@ export const deleteFolder = async (folderId) => {
 };
 
 export const updateFolder = async (id, data) => {
-  console.log(id);
-  console.log(data);
-  const accessToken = await getAccessToken();
-  const res = await http(`${API_URL}/folders/${id}`, {
+  const res = await httpWithAuth(`${API_URL}/folders/${id}`, {
     method: 'PUT',
     data: data,
-    accessToken: accessToken,
   });
-  console.log(res);
-
   if (res.ok) {
     return res.body;
   }

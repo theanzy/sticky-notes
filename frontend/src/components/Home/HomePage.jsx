@@ -14,7 +14,7 @@ import {
   addNote,
   updateFolder,
 } from '../../data/NotesData';
-import { getDarkMode, saveDarkMode } from '../../data/DarkModeData';
+import { saveDarkMode } from '../../data/DarkModeData';
 import SidePane from '../SidePane/SidePane';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
@@ -37,6 +37,11 @@ const reducer = (state, action) => {
         darkModeOn: action.payload.darkModeOn,
         folders: action.payload.folders,
         notes: action.payload.notes,
+        isLoading: false,
+      };
+    case ActionTypes.FETCH_ERROR:
+      return {
+        ...state,
         isLoading: false,
       };
     case ActionTypes.SAVING:
@@ -84,6 +89,11 @@ const reducer = (state, action) => {
         ...state,
         selectedFolderId: '',
       };
+    case ActionTypes.INIT_DARK_MODE:
+      return {
+        ...state,
+        darkModeOn: action.payload,
+      };
     case ActionTypes.TOGGLE_DARK_MODE:
       return {
         ...state,
@@ -95,24 +105,34 @@ const reducer = (state, action) => {
 };
 function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { isAuthLoading } = useAuth();
+  const { isAuthenticated, isAuthLoading } = useAuth();
 
   useEffect(() => {
     const fetchSavedState = async () => {
-      const [darkModeResult, getFoldersResult, getNotesResult] =
-        await Promise.all([getDarkMode(), getFolders(), getNotes()]);
+      const [getFoldersResult, getNotesResult] = await Promise.all([
+        getFolders(),
+        getNotes(),
+      ]);
       dispatch({
         type: ActionTypes.FETCH_SUCCESS,
         payload: {
-          darkModeOn: darkModeResult,
           folders: getFoldersResult,
           notes: getNotesResult,
-          isLoading: false && isAuthLoading,
+          isLoading: false,
         },
       });
     };
-    fetchSavedState();
-  }, []);
+    if (isAuthenticated) {
+      fetchSavedState();
+    } else {
+      dispatch({
+        type: ActionTypes.FETCH_ERROR,
+        payload: {
+          isLoading: false,
+        },
+      });
+    }
+  }, [isAuthenticated]);
 
   const storeNotes = async (notes) => {
     console.log('saving all notes local', notes);
@@ -193,7 +213,6 @@ function HomePage() {
       name: folderName,
     });
     const folders = [...state.folders, res];
-    console.log(folders);
 
     dispatch({
       type: ActionTypes.ADD_NEW_FOLDER,
@@ -289,9 +308,10 @@ function HomePage() {
       return 'Saving ...';
     }
   };
+
   return (
     <>
-      {state.isLoading || state.isSaving ? (
+      {state.isLoading || state.isSaving || isAuthLoading ? (
         <LoadSpinner text={LoadText()} />
       ) : null}
       <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>

@@ -18,6 +18,15 @@ app.use('/api/folders', require('./routes/folderRoutes'));
 
 app.use(errorHandler);
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('../frontend/build'));
+
+  const path = require('path');
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve('../frontend/build/index.html'));
+  });
+}
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

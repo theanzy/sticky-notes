@@ -43,6 +43,11 @@ const reducer = (state, action) => {
         isLoading: false,
         isSaving: false,
       };
+    case ActionTypes.LOADING:
+      return {
+        ...state,
+        isLoading: true,
+      };
     case ActionTypes.SAVING:
       return {
         ...state,
@@ -107,8 +112,7 @@ function HomePage() {
   const { isAuthenticated, isAuthLoading } = useAuth();
 
   const fetchApiAsync = useCallback(async () => {
-    const darkMode = getDarkMode();
-    dispatch({ type: ActionTypes.INIT_DARK_MODE, payload: darkMode });
+    dispatch({ type: ActionTypes.LOADING });
     const [getFoldersResult, getNotesResult] = await Promise.all([
       getFolders(),
       getNotes(),
@@ -125,6 +129,8 @@ function HomePage() {
 
   useEffect(() => {
     let controller = new AbortController();
+    const darkMode = getDarkMode();
+    dispatch({ type: ActionTypes.INIT_DARK_MODE, payload: darkMode });
     if (isAuthenticated) {
       fetchApiAsync();
     } else {
@@ -330,7 +336,7 @@ function HomePage() {
   };
 
   const LoadText = () => {
-    if (state.isLoading || isAuthLoading) {
+    if (state.isLoading) {
       return 'Loading ...';
     }
     if (state.isSaving) {

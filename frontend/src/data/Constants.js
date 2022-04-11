@@ -5,6 +5,7 @@ export const DragTypes = {
 export const ActionTypes = {
   FETCH_SUCCESS: 'FETCH_SUCCESS',
   FETCH_ERROR: 'FETCH_ERROR',
+  LOADING: 'LOADING',
   SAVING: 'SAVING',
   SAVE_ERROR: 'SAVE_ERROR',
   UPDATE_NOTES: 'UPDATE_NOTES',

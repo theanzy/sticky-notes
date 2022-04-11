@@ -330,14 +330,13 @@ function HomePage() {
   };
 
   const LoadText = () => {
-    if (state.isLoading) {
+    if (state.isLoading || isAuthLoading) {
       return 'Loading ...';
     }
     if (state.isSaving) {
       return 'Saving ...';
     }
   };
-
   return (
     <>
       {state.isLoading || state.isSaving || isAuthLoading ? (

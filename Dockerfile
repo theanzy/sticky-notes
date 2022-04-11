@@ -21,4 +21,4 @@ EXPOSE 5000 3000 8000
 
 ENV NODE_ENV=production
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "docker-start" ]

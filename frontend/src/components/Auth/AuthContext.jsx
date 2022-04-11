@@ -51,7 +51,7 @@ const AuthContextProvider = ({ children }) => {
   };
 
   const signOut = () => {
-    localStorage.removeItem('AUTH_TOKEN');
+    localStorage.removeItem('ACCESS_TOKEN');
     getAuth0Client().logout({
       client_id: Auth0Settings.clientId,
       returnTo: window.location.origin + '/signout-callback',

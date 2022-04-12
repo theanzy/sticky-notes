@@ -13,6 +13,13 @@ const checkJwt = jwt({
   algorithms: ['RS256'],
 });
 
+const filterUserData = (model) => async (req, res, next) => {
+  const Query = model.find({ user: req.user.sub });
+  res._ChainedQuery = Query;
+  next();
+};
+
 module.exports = {
   checkJwt,
+  filterUserData,
 };

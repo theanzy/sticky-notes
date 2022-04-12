@@ -1,14 +1,20 @@
 const asyncHandler = require('express-async-handler');
 const Note = require('../models/noteModel');
-const { pipe, toNoteDto, noteToMongoose } = require('../helper/mappers');
+const { toNoteDto, noteToMongoose } = require('../helper/mappers');
+const { filterUserData } = require('../middleware/authMiddleware');
+const { paginate } = require('../middleware/pagination');
 
 // @desc    Get notes
 // @route   GET /api/notes
 // @access  Private
-const getNotes = asyncHandler(async (req, res) => {
-  const notes = await Note.find({ user: req.user.sub });
-  res.status(200).json(notes.map(toNoteDto));
-});
+const getNotes = [
+  asyncHandler(filterUserData(Note)),
+  asyncHandler(paginate(Note)),
+  asyncHandler(async (req, res) => {
+    const notes = await res._ChainedQuery.exec();
+    res.status(200).json(notes.map(toNoteDto));
+  }),
+];
 
 // @desc    Add a note
 // @route   POST /api/notes

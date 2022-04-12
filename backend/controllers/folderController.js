@@ -1,14 +1,20 @@
 const asyncHandler = require('express-async-handler');
 const Folder = require('../models/folderModel');
 const { mongooseToGenericDto } = require('../helper/mappers');
+const { filterUserData } = require('../middleware/authMiddleware');
+const { paginate } = require('../middleware/pagination');
 
 // @desc    Get folders
 // @route   GET /api/folders
 // @access  Private
-const getFolders = asyncHandler(async (req, res) => {
-  const folders = await Folder.find({ user: req.user.sub });
-  res.status(200).json(folders.map(mongooseToGenericDto));
-});
+const getFolders = [
+  asyncHandler(filterUserData(Folder)),
+  asyncHandler(paginate(Folder)),
+  asyncHandler(async (req, res) => {
+    const folders = await res._ChainedQuery.exec();
+    res.status(200).json(folders.map(mongooseToGenericDto));
+  }),
+];
 
 // @desc    Add a folder
 // @route   POST /api/folders

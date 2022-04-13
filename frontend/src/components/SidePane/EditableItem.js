@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 import './SidePane.css';
 import {
   MdOutlineDeleteForever,
@@ -21,6 +21,8 @@ const EditableItem = ({
     readOnly: true,
     text: item.name,
   });
+
+  const inputRef = useRef(null);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -59,6 +61,7 @@ const EditableItem = ({
           onItemSelected(item);
         }}>
         <input
+          ref={inputRef}
           className='item-text'
           onBlur={onBlur}
           onChange={(e) => setState({ ...state, text: e.target.value })}
@@ -91,6 +94,7 @@ const EditableItem = ({
               className='item-icon'
               size={20}
               onClick={() => {
+                inputRef.current.focus();
                 setState({ ...state, readOnly: false });
               }}
             />

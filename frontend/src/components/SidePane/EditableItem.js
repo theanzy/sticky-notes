@@ -40,13 +40,45 @@ const EditableItem = ({
     }),
   });
 
-  const onBlur = () => {
+  const handleFocusOut = () => {
     // Note onBlur() triggers a setState() hook. Causing it to ignore the checkmark click
     if (selectedItemId !== item.id) {
       setState({
         readOnly: true,
         text: item.name,
       });
+    }
+  };
+
+  const handleItemClick = () => {
+    onItemSelected(item);
+  };
+
+  const handleTextChanged = (e) => {
+    const text = e.target.value;
+    console.dir(text);
+    setState((prev) => ({ ...prev, text }));
+  };
+
+  const handleSubmit = () => {
+    if (item.name !== state.text) {
+      onValueChanged(state.text);
+    }
+    setState((prev) => ({ ...prev, readOnly: true }));
+  };
+
+  const handleCancelClicked = () => {
+    setState({ text: item.name, readOnly: true });
+  };
+
+  const handleDeleteClicked = () => {
+    inputRef.current.focus();
+    setState((prev) => ({ ...prev, readOnly: false }));
+  };
+
+  const handleKeyUp = (e) => {
+    if (e.keyCode === 13) {
+      handleSubmit();
     }
   };
 
@@ -57,14 +89,13 @@ const EditableItem = ({
       ref={dropRef}>
       <div
         className={`item ${selectedItemId === item.id ? 'active' : ''}`}
-        onClick={() => {
-          onItemSelected(item);
-        }}>
+        onClick={handleItemClick}>
         <input
           ref={inputRef}
           className='item-text'
-          onBlur={onBlur}
-          onChange={(e) => setState({ ...state, text: e.target.value })}
+          onBlur={handleFocusOut}
+          onKeyUp={handleKeyUp}
+          onChange={handleTextChanged}
           value={state.text}
           readOnly={state.readOnly}
         />
@@ -73,19 +104,12 @@ const EditableItem = ({
             <MdOutlineCheck
               className='item-icon'
               size={20}
-              onClick={() => {
-                if (item.name !== state.text) {
-                  onValueChanged(state.text);
-                }
-                setState({ ...state, readOnly: true });
-              }}
+              onClick={handleSubmit}
             />
             <MdOutlineClose
               className='item-icon'
               size={20}
-              onClick={() => {
-                setState({ ...state, text: item.name, readOnly: true });
-              }}
+              onClick={handleCancelClicked}
             />
           </Fragment>
         ) : (
@@ -93,10 +117,7 @@ const EditableItem = ({
             <MdOutlineEdit
               className='item-icon'
               size={20}
-              onClick={() => {
-                inputRef.current.focus();
-                setState({ ...state, readOnly: false });
-              }}
+              onClick={handleDeleteClicked}
             />
             <MdOutlineDeleteForever
               className='item-icon'

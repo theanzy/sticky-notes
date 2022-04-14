@@ -1,12 +1,11 @@
 .color-box {
   min-width: 2rem;
   min-height: 2rem;
-  opacity: 1;
 }
 
 .color-box:hover {
   outline: 2px solid #51fff6;
-  filter: brightness(90%);
+  filter: brightness(95%);
 }
 
 .highlight {

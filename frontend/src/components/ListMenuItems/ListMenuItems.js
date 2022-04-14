@@ -5,8 +5,8 @@ import ColorBox from './ColorBox';
 const ListMenuItems = ({ items, onSelectedClick, selectedItem }) => {
   return (
     <div className='list-menu-items'>
-      {items.map((item, i) => (
-        <div key={i} className='menu-item'>
+      {items.map((item) => (
+        <div key={item} className='menu-item'>
           <input
             data-color={item}
             id={item}
@@ -14,12 +14,12 @@ const ListMenuItems = ({ items, onSelectedClick, selectedItem }) => {
             name='items'
             value={item}
           />
-          <label
+          <div
             data-color={item}
             htmlFor={item}
             onClick={() => onSelectedClick(item)}>
             <ColorBox color={item} selectedColor={selectedItem} />
-          </label>
+          </div>
         </div>
       ))}
     </div>

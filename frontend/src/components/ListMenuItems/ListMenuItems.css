@@ -1,15 +1,15 @@
 .list-menu-items {
   display: flex;
-  position: absolute;
-  right: -2px;
-  top: -2px;
+  position: relative;
+  float: right;
+  top: 5px;
   background-color: white;
   border-radius: 2px;
-  max-width: 400px;
 }
 
 .list-menu-items .menu-item {
-  display: flex;
+  display: inline-block;
+  cursor: pointer;
   padding: 2px;
 }
 
@@ -17,7 +17,3 @@
   display: none;
 }
 
-.list-menu-items label {
-  display: inline-block;
-  cursor: pointer;
-}

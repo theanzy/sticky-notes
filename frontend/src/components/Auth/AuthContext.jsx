@@ -40,7 +40,9 @@ const AuthContextProvider = ({ children }) => {
 
       setState({ isAuthenticated: isAuthenticated, isLoading: false });
     };
+    let controller = new AbortController();
     initAsync();
+    return () => controller.abort();
   }, []);
 
   const getAuth0Client = () => {

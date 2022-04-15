@@ -1,15 +1,6 @@
 import { API_URL } from './Settings';
 import { Auth } from './AuthData';
 
-const delay = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
-export const saveFolders = async (folders) => {
-  await delay(500);
-  localStorage.setItem('folders', JSON.stringify(folders));
-};
-
 /// api
 const http = async (url, params, accessToken) => {
   const request = new Request(url, {

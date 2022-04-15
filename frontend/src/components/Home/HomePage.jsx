@@ -5,7 +5,6 @@ import Header from '../Header';
 import {
   getNotes,
   getFolders,
-  saveFolders,
   addFolder,
   deleteFolder,
   updateNote,
@@ -140,13 +139,6 @@ function HomePage() {
     }
     return () => controller?.abort();
   }, [isAuthenticated]);
-
-  useEffect(() => {
-    const storeFolders = async () => {
-      await saveFolders(state.folders);
-    };
-    storeFolders();
-  }, [state.folders]);
 
   const withSaveAsync = async (callback, ...args) => {
     dispatch({ type: ActionTypes.SAVING });

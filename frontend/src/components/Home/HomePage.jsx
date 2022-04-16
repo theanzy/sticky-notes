@@ -52,13 +52,44 @@ const reducer = (state, action) => {
         ...state,
         isSaving: true,
       };
-    case ActionTypes.UPDATE_NOTES:
-      return { ...state, notes: action.payload, isSaving: false };
+    case ActionTypes.ADD_NOTE:
+      return {
+        ...state,
+        notes: [...state.notes, action.payload.note],
+        isSaving: false,
+      };
+    case ActionTypes.DELETE_NOTE:
+      return {
+        ...state,
+        isSaving: false,
+        notes: state.notes.filter((note) => note.id !== action.payload.id),
+      };
+    case ActionTypes.UPDATE_NOTE:
+      return {
+        ...state,
+        isSaving: false,
+        notes: state.notes.map((note) => {
+          if (note.id === action.payload.note.id) {
+            return action.payload.note;
+          }
+          return note;
+        }),
+      };
+    case ActionTypes.CHANGE_NOTE_FOLDER:
+      return {
+        ...state,
+        isSaving: false,
+        notes: state.notes.map((note) =>
+          note.id === action.payload.noteId
+            ? updateField(note, 'folderId', action.payload.folderId)
+            : note
+        ),
+      };
     case ActionTypes.ADD_NEW_FOLDER:
       return {
         ...state,
-        folders: action.payload.folders,
-        selectedFolderId: action.payload.selectedFolderId,
+        folders: [...state.folders, action.payload.folder],
+        selectedFolderId: action.payload.folder.id,
         isSaving: false,
       };
     case ActionTypes.SEARCH:
@@ -70,16 +101,16 @@ const reducer = (state, action) => {
     case ActionTypes.DELETE_FOLDER:
       return {
         ...state,
-        folders: action.payload.folders,
-        notes: action.payload.notes,
-        selectedFolderId: action.payload.selectedFolderId,
+        folders: state.folders.filter(
+          (folder) => folder.id !== action.payload.folderId
+        ),
+        selectedFolderId: '',
         isSaving: false,
       };
     case ActionTypes.SELECTED_FOLDER_CHANGED:
       return {
         ...state,
-        folders: action.payload.folders,
-        selectedFolderId: action.payload.selectedFolderId,
+        folders: foldersChanged(state.folders, action.payload.folder),
         isSaving: false,
       };
     case ActionTypes.ON_FOLDER_SELECTED:
@@ -106,6 +137,17 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+const updateField = (item, key, value) => {
+  return { ...item, [key]: value };
+};
+
+const foldersChanged = (folders, updatedFolder) => {
+  return folders.map((folder) =>
+    folder.id === updatedFolder.id ? updatedFolder : folder
+  );
+};
+
 function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isAuthenticated, isAuthLoading } = useAuth();
@@ -146,10 +188,6 @@ function HomePage() {
     return res;
   };
 
-  const updateNotesState = (notes) => {
-    dispatch({ type: ActionTypes.UPDATE_NOTES, payload: notes });
-  };
-
   const handleAddNote = async (content) => {
     const data = {
       content: content,
@@ -160,7 +198,12 @@ function HomePage() {
     }
     const newNote = await withSaveAsync(addNote, data);
     if (newNote) {
-      updateNotesState([...state.notes, newNote]);
+      dispatch({
+        type: ActionTypes.ADD_NOTE,
+        payload: {
+          note: newNote,
+        },
+      });
     } else {
       dispatch({ type: ActionTypes.FETCH_ERROR });
     }
@@ -169,8 +212,7 @@ function HomePage() {
   const handleDeleteNote = async (id) => {
     const res = await withSaveAsync(deleteNote, id);
     if (res) {
-      const updatedNotes = state.notes.filter((note) => note.id !== res.id);
-      updateNotesState(updatedNotes);
+      dispatch({ type: ActionTypes.DELETE_NOTE, payload: { id: res.id } });
     } else {
       dispatch({ type: ActionTypes.FETCH_ERROR });
     }
@@ -194,12 +236,13 @@ function HomePage() {
         updatedNote.id,
         data
       );
-      const mapper = (note) => {
-        return note.id === noteToUpdate.id ? noteToUpdate : note;
-      };
-      const newNotes = state.notes.map(mapper);
       if (noteToUpdate) {
-        updateNotesState(newNotes);
+        dispatch({
+          type: ActionTypes.UPDATE_NOTE,
+          payload: {
+            note: noteToUpdate,
+          },
+        });
       } else {
         dispatch({ type: ActionTypes.FETCH_ERROR });
       }
@@ -225,15 +268,16 @@ function HomePage() {
     const res = await withSaveAsync(addFolder, {
       name: folderName,
     });
-    const folders = [...state.folders, res];
-
-    dispatch({
-      type: ActionTypes.ADD_NEW_FOLDER,
-      payload: {
-        folders: folders,
-        selectedFolderId: res.id,
-      },
-    });
+    if (res) {
+      dispatch({
+        type: ActionTypes.ADD_NEW_FOLDER,
+        payload: {
+          folder: res,
+        },
+      });
+    } else {
+      dispatch({ type: ActionTypes.FETCH_ERROR });
+    }
   };
 
   const handleSearchNote = (text) => {
@@ -243,33 +287,18 @@ function HomePage() {
     });
   };
 
-  const selectNewFolderId = (currentId, deleteId) => {
-    let newId = '';
-    if (currentId !== deleteId && currentId.length > 0) {
-      newId = currentId;
-    }
-    return newId;
-  };
-
   const handleDeleteFolder = async (deletedFolder) => {
     const res = await withSaveAsync(deleteFolder, deletedFolder.id);
-
-    const folders = state.folders.filter((folder_) => folder_.id !== res.id);
-    const notes = state.notes.map((note) =>
-      note.folderId === res.id ? { ...note, folderId: '' } : note
-    );
-    dispatch({
-      type: ActionTypes.DELETE_FOLDER,
-      payload: {
-        folders: folders,
-        notes: notes,
-        selectedFolderId: selectNewFolderId(state.selectedFolderId, res.id),
-      },
-    });
-  };
-
-  const updateField = (item, key, value) => {
-    return { ...item, [key]: value };
+    if (res) {
+      dispatch({
+        type: ActionTypes.DELETE_FOLDER,
+        payload: {
+          folderId: res.id,
+        },
+      });
+    } else {
+      dispatch({ type: ActionTypes.FETCH_ERROR });
+    }
   };
 
   const changeNoteFolder = async ({ folderId, noteId }) => {
@@ -278,13 +307,10 @@ function HomePage() {
       const data = { folder: folderId };
       const updatedNote = await withSaveAsync(updateNote, noteId, data);
       if (updatedNote) {
-        updateNotesState(
-          state.notes.map((note) =>
-            note.id === updatedNote.id
-              ? updateField(note, 'folderId', updatedNote.folderId)
-              : note
-          )
-        );
+        dispatch({
+          type: ActionTypes.CHANGE_NOTE_FOLDER,
+          payload: { noteId: noteId, folderId: folderId },
+        });
       } else {
         dispatch({ type: ActionTypes.FETCH_ERROR });
       }
@@ -302,20 +328,16 @@ function HomePage() {
 
   const handleSelectedFolderChanged = async (item) => {
     const res = await withSaveAsync(updateFolder, item.id, { name: item.name });
-    dispatch({
-      type: ActionTypes.SELECTED_FOLDER_CHANGED,
-      payload: {
-        folders: foldersChanged(res),
-        selectedFolderId: res.id,
-      },
-    });
-  };
-
-  const foldersChanged = (updatedFolder) => {
-    const folders = state.folders.map((folder) =>
-      folder.id === updatedFolder.id ? updatedFolder : folder
-    );
-    return folders;
+    if (res) {
+      dispatch({
+        type: ActionTypes.SELECTED_FOLDER_CHANGED,
+        payload: {
+          folder: res,
+        },
+      });
+    } else {
+      dispatch({ type: ActionTypes.FETCH_ERROR });
+    }
   };
 
   const handleShowAllItems = () => {

@@ -43,7 +43,6 @@ export const getNotes = async () => {
 };
 
 export const addNote = async (note) => {
-  console.log(note);
   const res = await httpWithAuth(`${API_URL}/notes`, {
     method: 'POST',
     data: note,

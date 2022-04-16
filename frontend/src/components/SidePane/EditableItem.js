@@ -56,11 +56,11 @@ const EditableItem = ({
 
   const handleTextChanged = (e) => {
     const text = e.target.value;
-    console.dir(text);
     setState((prev) => ({ ...prev, text }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (item.name !== state.text) {
       onValueChanged(state.text);
     }
@@ -76,25 +76,19 @@ const EditableItem = ({
     setState((prev) => ({ ...prev, readOnly: false }));
   };
 
-  const handleKeyUp = (e) => {
-    if (e.keyCode === 13) {
-      handleSubmit();
-    }
-  };
-
   return (
     <div
       key={item.id}
       className={`item-container ${isDraggingOver ? 'dragging-over' : ''}`}
       ref={dropRef}>
-      <div
+      <form
         className={`item ${selectedItemId === item.id ? 'active' : ''}`}
-        onClick={handleItemClick}>
+        onClick={handleItemClick}
+        onSubmit={handleSubmit}>
         <input
           ref={inputRef}
           className='item-text'
           onBlur={handleFocusOut}
-          onKeyUp={handleKeyUp}
           onChange={handleTextChanged}
           value={state.text}
           readOnly={state.readOnly}
@@ -133,7 +127,7 @@ const EditableItem = ({
             />
           </Fragment>
         )}
-      </div>
+      </form>
     </div>
   );
 };

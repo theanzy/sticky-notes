@@ -17,6 +17,8 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
     () => debounce(handleNoteUpdated, 1500),
     [handleNoteUpdated]
   );
+  console.log('render', note.content);
+  const [noteContent, setNoteContent] = useState(note.content);
 
   const [{ opacity }, dragRef] = useDrag({
     type: DragTypes.Note,
@@ -34,16 +36,24 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   }, [debouncedSaveNote]);
 
   const updateContent = (content) => {
-    const newNote = { ...note, content };
-    debouncedSaveNote(newNote);
+    setNoteContent(content);
   };
 
+  useEffect(() => {
+    if (note.content != noteContent) {
+      debouncedSaveNote({ ...note, noteContent });
+    } else {
+      debouncedSaveNote.cancel();
+    }
+  }, [noteContent]);
+
   const changeColor = (newColor) => {
-    const newNote = {
-      ...note,
-      color: newColor,
-    };
-    handleNoteUpdated(newNote);
+    if (newColor !== note.color) {
+      handleNoteUpdated({
+        ...note,
+        color: newColor,
+      });
+    }
   };
 
   return (
@@ -64,7 +74,7 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
         />
       </div>
       <div>
-        <Editor htmlContent={note.content} onContentChange={updateContent} />
+        <Editor htmlContent={noteContent} onContentChange={updateContent} />
         <div className='note-footer'>
           Last updated on <small>{note.updatedDate}</small>
         </div>

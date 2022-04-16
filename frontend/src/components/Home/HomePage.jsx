@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import NoteList from '../NoteList';
 import Search from '../Search';
 import Header from '../Header';
@@ -20,7 +20,6 @@ import { useAuth } from '../Auth/AuthContext';
 const initialState = {
   darkModeOn: false,
   isLoading: true,
-  isSaving: false,
   folders: [],
   selectedFolderId: '',
   notes: [],
@@ -40,7 +39,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         isLoading: false,
-        isSaving: false,
       };
     case ActionTypes.LOADING:
       return {
@@ -50,24 +48,20 @@ const reducer = (state, action) => {
     case ActionTypes.SAVING:
       return {
         ...state,
-        isSaving: true,
       };
     case ActionTypes.ADD_NOTE:
       return {
         ...state,
         notes: [...state.notes, action.payload.note],
-        isSaving: false,
       };
     case ActionTypes.DELETE_NOTE:
       return {
         ...state,
-        isSaving: false,
         notes: state.notes.filter((note) => note.id !== action.payload.id),
       };
     case ActionTypes.UPDATE_NOTE:
       return {
         ...state,
-        isSaving: false,
         notes: state.notes.map((note) => {
           if (note.id === action.payload.note.id) {
             return action.payload.note;
@@ -78,7 +72,6 @@ const reducer = (state, action) => {
     case ActionTypes.CHANGE_NOTE_FOLDER:
       return {
         ...state,
-        isSaving: false,
         notes: state.notes.map((note) =>
           note.id === action.payload.noteId
             ? updateField(note, 'folderId', action.payload.folderId)
@@ -90,7 +83,6 @@ const reducer = (state, action) => {
         ...state,
         folders: [...state.folders, action.payload.folder],
         selectedFolderId: action.payload.folder.id,
-        isSaving: false,
       };
     case ActionTypes.SEARCH:
       return {
@@ -105,13 +97,11 @@ const reducer = (state, action) => {
           (folder) => folder.id !== action.payload.folderId
         ),
         selectedFolderId: '',
-        isSaving: false,
       };
     case ActionTypes.SELECTED_FOLDER_CHANGED:
       return {
         ...state,
         folders: foldersChanged(state.folders, action.payload.folder),
-        isSaving: false,
       };
     case ActionTypes.ON_FOLDER_SELECTED:
       return {
@@ -151,6 +141,7 @@ const foldersChanged = (folders, updatedFolder) => {
 function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isAuthenticated, isAuthLoading } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
 
   const fetchApiAsync = useCallback(async () => {
     dispatch({ type: ActionTypes.LOADING });
@@ -183,9 +174,14 @@ function HomePage() {
   }, [isAuthenticated]);
 
   const withSaveAsync = async (callback, ...args) => {
-    dispatch({ type: ActionTypes.SAVING });
+    setIsSaving(true);
     const res = await callback(...args);
     return res;
+  };
+
+  const dispatchWithSave = (data) => {
+    dispatch(data);
+    setIsSaving(false);
   };
 
   const handleAddNote = async (content) => {
@@ -198,7 +194,7 @@ function HomePage() {
     }
     const newNote = await withSaveAsync(addNote, data);
     if (newNote) {
-      dispatch({
+      dispatchWithSave({
         type: ActionTypes.ADD_NOTE,
         payload: {
           note: newNote,
@@ -212,40 +208,29 @@ function HomePage() {
   const handleDeleteNote = async (id) => {
     const res = await withSaveAsync(deleteNote, id);
     if (res) {
-      dispatch({ type: ActionTypes.DELETE_NOTE, payload: { id: res.id } });
+      dispatchWithSave({
+        type: ActionTypes.DELETE_NOTE,
+        payload: { id: res.id },
+      });
     } else {
       dispatch({ type: ActionTypes.FETCH_ERROR });
     }
   };
   const handleNoteUpdated = async (updatedNote) => {
-    const currentNote = state.notes.find((n) => n.id === updatedNote.id);
-
-    if (currentNote) {
-      let data = {};
-      if (currentNote.content !== updatedNote.content) {
-        data.content = updatedNote.content;
-      }
-      if (currentNote.color !== updatedNote.color) {
-        data.color = updatedNote.color;
-      }
-      if (!data.content && !data.color) {
-        return;
-      }
-      const noteToUpdate = await withSaveAsync(
-        updateNote,
-        updatedNote.id,
-        data
-      );
-      if (noteToUpdate) {
-        dispatch({
-          type: ActionTypes.UPDATE_NOTE,
-          payload: {
-            note: noteToUpdate,
-          },
-        });
-      } else {
-        dispatch({ type: ActionTypes.FETCH_ERROR });
-      }
+    let data = {
+      color: updatedNote.color,
+      content: updatedNote.content,
+    };
+    const noteToUpdate = await withSaveAsync(updateNote, updatedNote.id, data);
+    if (noteToUpdate) {
+      dispatchWithSave({
+        type: ActionTypes.UPDATE_NOTE,
+        payload: {
+          note: noteToUpdate,
+        },
+      });
+    } else {
+      dispatch({ type: ActionTypes.FETCH_ERROR });
     }
   };
 
@@ -269,7 +254,7 @@ function HomePage() {
       name: folderName,
     });
     if (res) {
-      dispatch({
+      dispatchWithSave({
         type: ActionTypes.ADD_NEW_FOLDER,
         payload: {
           folder: res,
@@ -290,7 +275,7 @@ function HomePage() {
   const handleDeleteFolder = async (deletedFolder) => {
     const res = await withSaveAsync(deleteFolder, deletedFolder.id);
     if (res) {
-      dispatch({
+      dispatchWithSave({
         type: ActionTypes.DELETE_FOLDER,
         payload: {
           folderId: res.id,
@@ -307,7 +292,7 @@ function HomePage() {
       const data = { folder: folderId };
       const updatedNote = await withSaveAsync(updateNote, noteId, data);
       if (updatedNote) {
-        dispatch({
+        dispatchWithSave({
           type: ActionTypes.CHANGE_NOTE_FOLDER,
           payload: { noteId: noteId, folderId: folderId },
         });
@@ -329,7 +314,7 @@ function HomePage() {
   const handleSelectedFolderChanged = async (item) => {
     const res = await withSaveAsync(updateFolder, item.id, { name: item.name });
     if (res) {
-      dispatch({
+      dispatchWithSave({
         type: ActionTypes.SELECTED_FOLDER_CHANGED,
         payload: {
           folder: res,
@@ -353,13 +338,13 @@ function HomePage() {
     if (state.isLoading) {
       return 'Loading ...';
     }
-    if (state.isSaving) {
+    if (isSaving) {
       return 'Saving ...';
     }
   };
   return (
     <>
-      {state.isLoading || state.isSaving || isAuthLoading ? (
+      {state.isLoading || isSaving || isAuthLoading ? (
         <LoadSpinner text={LoadText()} />
       ) : null}
       <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>

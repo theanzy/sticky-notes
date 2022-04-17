@@ -7,6 +7,7 @@ import './Colors.css';
 import { useDrag } from 'react-dnd';
 import { DragTypes } from '../data/Constants';
 import DeleteModal from './Modal/DeleteModal';
+import useUpdateEffect from './Hooks/useUpdateEffect';
 const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
   const [showModal, setShowModal] = useState(false);
@@ -38,7 +39,7 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
     setNoteContent(content);
   };
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (note.content != noteContent) {
       debouncedSaveNote({ ...note, noteContent });
     } else {

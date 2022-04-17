@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react';
+import React, { useCallback, useReducer, useState } from 'react';
 import NoteList from '../NoteList';
 import Search from '../Search';
 import Header from '../Header';
@@ -16,7 +16,8 @@ import SidePane from '../SidePane/SidePane';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
 import { useAuth } from '../Auth/AuthContext';
-import useLocalStorage from '../helpers/useLocalStorage';
+import useLocalStorage from '../Hooks/useLocalStorage';
+import useUpdateEffect from '../Hooks/useUpdateEffect';
 const initialState = {
   isLoading: true,
   folders: [],
@@ -150,7 +151,7 @@ function HomePage() {
     });
   }, []);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     let controller = new AbortController();
     if (isAuthenticated) {
       fetchApiAsync();

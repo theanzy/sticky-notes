@@ -18,7 +18,6 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
 import { useAuth } from '../Auth/AuthContext';
 const initialState = {
-  darkModeOn: false,
   isLoading: true,
   folders: [],
   selectedFolderId: '',
@@ -113,16 +112,6 @@ const reducer = (state, action) => {
         ...state,
         selectedFolderId: '',
       };
-    case ActionTypes.INIT_DARK_MODE:
-      return {
-        ...state,
-        darkModeOn: action.payload,
-      };
-    case ActionTypes.TOGGLE_DARK_MODE:
-      return {
-        ...state,
-        darkModeOn: !state.darkModeOn,
-      };
     default:
       return state;
   }
@@ -142,9 +131,11 @@ function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isAuthenticated, isAuthLoading } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => getDarkMode());
 
   const fetchApiAsync = useCallback(async () => {
     dispatch({ type: ActionTypes.LOADING });
+
     const [getFoldersResult, getNotesResult] = await Promise.all([
       getFolders(),
       getNotes(),
@@ -160,9 +151,11 @@ function HomePage() {
   }, []);
 
   useEffect(() => {
+    saveDarkMode(darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
     let controller = new AbortController();
-    const darkMode = getDarkMode();
-    dispatch({ type: ActionTypes.INIT_DARK_MODE, payload: darkMode });
     if (isAuthenticated) {
       fetchApiAsync();
     } else {
@@ -330,12 +323,11 @@ function HomePage() {
   };
 
   const handleToggleDarkMode = () => {
-    saveDarkMode(!state.darkModeOn);
-    dispatch({ type: ActionTypes.TOGGLE_DARK_MODE });
+    setDarkMode((prev) => !prev);
   };
 
   const LoadText = () => {
-    if (state.isLoading) {
+    if (state.isLoading || isAuthLoading) {
       return 'Loading ...';
     }
     if (isSaving) {
@@ -347,7 +339,7 @@ function HomePage() {
       {state.isLoading || isSaving || isAuthLoading ? (
         <LoadSpinner text={LoadText()} />
       ) : null}
-      <div className={`container ${state.darkModeOn ? 'dark-mode' : ''}`}>
+      <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
         <div className='side'>
           <SidePane
             items={state.folders}
@@ -362,10 +354,7 @@ function HomePage() {
         </div>
 
         <div className='main'>
-          <Header
-            checked={state.darkModeOn}
-            toggleDarkMode={handleToggleDarkMode}
-          />
+          <Header checked={darkMode} toggleDarkMode={handleToggleDarkMode} />
           <div className='content'>
             <Search handleSearchNote={handleSearchNote} />
             <NoteList

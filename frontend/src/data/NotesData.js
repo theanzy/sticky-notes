@@ -13,13 +13,17 @@ const http = async (url, params, accessToken) => {
   if (accessToken) {
     request.headers.set('authorization', `bearer ${accessToken}`);
   }
-  const response = await fetch(request);
-  const body = await response.json();
+  try {
+    const response = await fetch(request);
+    const body = await response.json();
 
-  if (response.ok) {
-    return { ok: response.ok, body };
-  } else {
-    return { errors: body.errors };
+    if (response.ok) {
+      return { ok: response.ok, body };
+    } else {
+      return { errors: body.errors };
+    }
+  } catch (error) {
+    return { errors: [error] };
   }
 };
 

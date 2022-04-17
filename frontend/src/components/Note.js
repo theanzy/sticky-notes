@@ -17,7 +17,6 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
     () => debounce(handleNoteUpdated, 1500),
     [handleNoteUpdated]
   );
-  console.log('render', note.content);
   const [noteContent, setNoteContent] = useState(note.content);
 
   const [{ opacity }, dragRef] = useDrag({

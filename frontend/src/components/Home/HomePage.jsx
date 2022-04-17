@@ -12,11 +12,11 @@ import {
   addNote,
   updateFolder,
 } from '../../data/NotesData';
-import { getDarkMode, saveDarkMode } from '../../data/DarkModeData';
 import SidePane from '../SidePane/SidePane';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
 import { useAuth } from '../Auth/AuthContext';
+import useLocalStorage from '../helpers/useLocalStorage';
 const initialState = {
   isLoading: true,
   folders: [],
@@ -131,7 +131,7 @@ function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isAuthenticated, isAuthLoading } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => getDarkMode());
+  const [darkMode, setDarkMode] = useLocalStorage('dark-mode', false);
 
   const fetchApiAsync = useCallback(async () => {
     dispatch({ type: ActionTypes.LOADING });
@@ -149,10 +149,6 @@ function HomePage() {
       },
     });
   }, []);
-
-  useEffect(() => {
-    saveDarkMode(darkMode);
-  }, [darkMode]);
 
   useEffect(() => {
     let controller = new AbortController();

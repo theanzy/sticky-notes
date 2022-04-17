@@ -1,24 +1,25 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
-import debounce from 'lodash/debounce';
 import Editor from './Editor/Editor';
 import './Colors.css';
 import { useDrag } from 'react-dnd';
 import { DragTypes } from '../data/Constants';
 import DeleteModal from './Modal/DeleteModal';
-import useUpdateEffect from './Hooks/useUpdateEffect';
+import useDebounce from './Hooks/useDebounce';
 const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
   const [showModal, setShowModal] = useState(false);
   const toggleShowModal = () => {
     setShowModal((prev) => !prev);
   };
-  const debouncedSaveNote = useMemo(
-    () => debounce(handleNoteUpdated, 1500),
-    [handleNoteUpdated]
-  );
+
   const [noteContent, setNoteContent] = useState(note.content);
+  useDebounce(
+    () => handleNoteUpdated({ ...note, content: noteContent }),
+    2000,
+    [noteContent]
+  );
 
   const [{ opacity }, dragRef] = useDrag({
     type: DragTypes.Note,
@@ -29,23 +30,9 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
     }),
   });
 
-  useEffect(() => {
-    return () => {
-      debouncedSaveNote.cancel();
-    };
-  }, [debouncedSaveNote]);
-
   const updateContent = (content) => {
     setNoteContent(content);
   };
-
-  useUpdateEffect(() => {
-    if (note.content != noteContent) {
-      debouncedSaveNote({ ...note, noteContent });
-    } else {
-      debouncedSaveNote.cancel();
-    }
-  }, [noteContent]);
 
   const changeColor = (newColor) => {
     if (newColor !== note.color) {

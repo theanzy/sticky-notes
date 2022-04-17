@@ -1,14 +1,14 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { MdOutlineClose } from 'react-icons/md';
 import './DeleteModal.css';
 const DeleteModal = ({ shown, title, subtitle, onDelete, onClosed }) => {
-  return shown ? (
-    <div className='modal-container' onClick={onClosed}>
-      <div
-        className='modal-content'
-        onClick={(e) => {
-          e.stopPropagation();
-        }}>
+  if (!shown) {
+    return null;
+  }
+  return createPortal(
+    <div className='modal-container'>
+      <div className='modal-content'>
         <MdOutlineClose onClick={onClosed} fontSize={20} className='close' />
         <div className='title'>{title}</div>
         <div className='subtitle'>{subtitle}</div>
@@ -27,8 +27,9 @@ const DeleteModal = ({ shown, title, subtitle, onDelete, onClosed }) => {
           </button>
         </div>
       </div>
-    </div>
-  ) : null;
+    </div>,
+    document.getElementById('portal')
+  );
 };
 
 export default DeleteModal;

@@ -184,7 +184,7 @@ function HomePage() {
         },
       });
     } else {
-      dispatch({ type: ActionTypes.FETCH_ERROR });
+      setIsSaving(false);
     }
   };
 
@@ -196,7 +196,7 @@ function HomePage() {
         payload: { id: res.id },
       });
     } else {
-      dispatch({ type: ActionTypes.FETCH_ERROR });
+      setIsSaving(false);
     }
   };
   const handleNoteUpdated = async (updatedNote) => {
@@ -213,7 +213,7 @@ function HomePage() {
         },
       });
     } else {
-      dispatch({ type: ActionTypes.FETCH_ERROR });
+      setIsSaving(false);
     }
   };
 
@@ -244,7 +244,7 @@ function HomePage() {
         },
       });
     } else {
-      dispatch({ type: ActionTypes.FETCH_ERROR });
+      setIsSaving(false);
     }
   };
 
@@ -258,7 +258,7 @@ function HomePage() {
         },
       });
     } else {
-      dispatch({ type: ActionTypes.FETCH_ERROR });
+      setIsSaving(false);
     }
   };
 
@@ -273,7 +273,7 @@ function HomePage() {
           payload: { noteId: noteId, folderId: folderId },
         });
       } else {
-        dispatch({ type: ActionTypes.FETCH_ERROR });
+        setIsSaving(false);
       }
     }
   };
@@ -297,7 +297,7 @@ function HomePage() {
         },
       });
     } else {
-      dispatch({ type: ActionTypes.FETCH_ERROR });
+      setIsSaving(false);
     }
   };
 

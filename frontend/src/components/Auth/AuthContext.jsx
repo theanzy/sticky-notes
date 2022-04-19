@@ -24,10 +24,8 @@ const AuthContextProvider = ({ children }) => {
     const initAsync = async () => {
       const auth0ClientCreated = await Auth.getClientAsync();
       setAuth0Client(auth0ClientCreated);
-      if (
-        window.location.pathname === '/signin-callback' &&
-        window.location.search.indexOf('code=') > -1
-      ) {
+      const code = new URLSearchParams(window.location.search).get('code');
+      if (window.location.pathname === '/signin-callback' && code) {
         await auth0ClientCreated.handleRedirectCallback();
         window.location.replace(window.location.origin);
       }

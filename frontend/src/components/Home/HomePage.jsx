@@ -19,11 +19,10 @@ import { useAuth } from '../Auth/AuthContext';
 import useLocalStorage from '../Hooks/useLocalStorage';
 import useUpdateEffect from '../Hooks/useUpdateEffect';
 const initialState = {
-  isLoading: true,
+  isLoading: false,
   folders: [],
   selectedFolderId: '',
   notes: [],
-  searchText: '',
 };
 
 const reducer = (state, action) => {
@@ -84,12 +83,6 @@ const reducer = (state, action) => {
         folders: [...state.folders, action.payload.folder],
         selectedFolderId: action.payload.folder.id,
       };
-    case ActionTypes.SEARCH:
-      return {
-        ...state,
-        searchText: action.payload,
-        selectedFolderId: '',
-      };
     case ActionTypes.DELETE_FOLDER:
       return {
         ...state,
@@ -133,10 +126,10 @@ function HomePage() {
   const { isAuthenticated, isAuthLoading } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [darkMode, setDarkMode] = useLocalStorage('dark-mode', false);
+  const [searchText, setSearchText] = useState('');
 
   const fetchApiAsync = useCallback(async () => {
     dispatch({ type: ActionTypes.LOADING });
-
     const [getFoldersResult, getNotesResult] = await Promise.all([
       getFolders(),
       getNotes(),
@@ -230,7 +223,7 @@ function HomePage() {
       div.innerHTML = note.content;
       const text = div.textContent || div.innerText || '';
       return (
-        text.toLocaleLowerCase().includes(state.searchText) &&
+        text.toLocaleLowerCase().includes(searchText) &&
         (state.selectedFolderId.length > 0
           ? note.folderId === state.selectedFolderId
           : true)
@@ -253,13 +246,6 @@ function HomePage() {
     } else {
       dispatch({ type: ActionTypes.FETCH_ERROR });
     }
-  };
-
-  const handleSearchNote = (text) => {
-    dispatch({
-      type: ActionTypes.SEARCH,
-      payload: text,
-    });
   };
 
   const handleDeleteFolder = async (deletedFolder) => {
@@ -353,7 +339,7 @@ function HomePage() {
         <div className='main'>
           <Header checked={darkMode} toggleDarkMode={handleToggleDarkMode} />
           <div className='content'>
-            <Search handleSearchNote={handleSearchNote} />
+            <Search onChange={(text) => setSearchText(text)} />
             <NoteList
               notes={filteredNotes()}
               handleAddNote={handleAddNote}

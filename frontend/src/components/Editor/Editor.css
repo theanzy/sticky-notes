@@ -1,5 +1,5 @@
 .editor-container {
-  flex: 1 1 auto;
+  flex: 1;
   display: flex;
   cursor: context-menu;
 }
@@ -88,7 +88,6 @@
 }
 
 .editor-container .ql-editor {
-  height: 260px;
   padding: 0px 10px;
   border: none;
   overflow-y: hidden;

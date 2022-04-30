@@ -7,6 +7,7 @@ import { useDrag } from 'react-dnd';
 import { DragTypes } from '../data/Constants';
 import DeleteModal from './Modal/DeleteModal';
 import useDebounce from './Hooks/useDebounce';
+import DragPlaceholder from './Dragging/DragPlaceholder';
 const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +22,7 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
     [noteContent]
   );
 
-  const [{ opacity }, dragRef] = useDrag({
+  const [{ opacity, isDragging }, dragRef] = useDrag({
     type: DragTypes.Note,
     item: { noteId: note.id },
     collect: (monitor) => ({
@@ -60,8 +61,13 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
           selectedItem={note.color}
         />
       </div>
-      <div>
-        <Editor htmlContent={noteContent} onContentChange={updateContent} />
+      <div style={{ display: 'flex', height: '55vh' }}>
+        {isDragging ? (
+          <DragPlaceholder />
+        ) : (
+          <Editor htmlContent={noteContent} onContentChange={updateContent} />
+        )}
+
         <div className='note-footer'>
           Last updated on <small>{note.updatedDate}</small>
         </div>

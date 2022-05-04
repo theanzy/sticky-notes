@@ -190,8 +190,8 @@
   background-color: #353535;
 }
 
-@media only screen and (max-width: 500px) {
+@media (max-width: 650px) {
   .sidebar {
-    width: 0;
+    display: none;
   }
 }

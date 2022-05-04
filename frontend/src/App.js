@@ -8,6 +8,7 @@ import NotFoundPage from './components/NotFoundPage';
 import HomePage from './components/Home/HomePage';
 import { SignInPage } from './components/Auth/SignInPage';
 import { SignOutPage } from './components/Auth/SignOutPage';
+import LandingPage from './components/LandingPage/LandingPage';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
           <Routes>
             <Route path='/signin-callback' element={<SignInPage />} />
             <Route path='/signout-callback' element={<SignOutPage />} />
-            <Route path='/' element={<HomePage />} />
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/home' element={<HomePage />} />
             <Route path='*' element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>

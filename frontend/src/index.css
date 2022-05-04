@@ -21,21 +21,11 @@ code {
 
 .header-main {
   width: 90%;
+  margin: auto;
   display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.header-auth {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  background-color: #f9eaff;
-}
-
-.dark-mode .header-auth {
-  background-color: #000000;
 }
 
 .dark-mode h1 {
@@ -43,7 +33,6 @@ code {
 }
 
 .container {
-  width: 100%;
   display: flex;
   justify-content: space-between;
   background-color: #fff9fd;
@@ -57,7 +46,7 @@ code {
   flex: 0 15%;
 }
 
-.main {
+.home-main {
   flex: 1 85%;
   padding-bottom: 20px;
   padding-top: 0px;
@@ -259,11 +248,11 @@ button {
 button.outline-white {
   width: fit-content;
   background-color: #ffffff;
-  color:#000000;
+  color: #000000;
 }
 button.outline-white:hover {
   background-color: #f1f1f1;
-  color:#161616;
+  color: #161616;
 }
 
 button.delete {

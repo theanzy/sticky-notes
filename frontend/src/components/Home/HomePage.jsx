@@ -1,7 +1,7 @@
-import React, { useCallback, useReducer, useState } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import NoteList from '../NoteList';
 import Search from '../Search';
-import Header from '../Header';
+import MainHeader from '../MainHeader';
 import {
   getNotes,
   getFolders,
@@ -17,7 +17,8 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
 import { useAuth } from '../Auth/AuthContext';
 import useLocalStorage from '../Hooks/useLocalStorage';
-import useUpdateEffect from '../Hooks/useUpdateEffect';
+import Header from '../Header/Header';
+import { Navigate } from 'react-router-dom';
 const initialState = {
   isLoading: false,
   folders: [],
@@ -128,23 +129,22 @@ function HomePage() {
   const [darkMode, setDarkMode] = useLocalStorage('dark-mode', false);
   const [searchText, setSearchText] = useState('');
 
-  const fetchApiAsync = useCallback(async () => {
-    dispatch({ type: ActionTypes.LOADING });
-    const [getFoldersResult, getNotesResult] = await Promise.all([
-      getFolders(),
-      getNotes(),
-    ]);
-    dispatch({
-      type: ActionTypes.FETCH_SUCCESS,
-      payload: {
-        folders: getFoldersResult,
-        notes: getNotesResult,
-        isLoading: false,
-      },
-    });
-  }, []);
-
-  useUpdateEffect(() => {
+  useEffect(() => {
+    const fetchApiAsync = async () => {
+      dispatch({ type: ActionTypes.LOADING });
+      const [getFoldersResult, getNotesResult] = await Promise.all([
+        getFolders(),
+        getNotes(),
+      ]);
+      dispatch({
+        type: ActionTypes.FETCH_SUCCESS,
+        payload: {
+          folders: getFoldersResult,
+          notes: getNotesResult,
+          isLoading: false,
+        },
+      });
+    };
     let controller = new AbortController();
     if (isAuthenticated) {
       fetchApiAsync();
@@ -154,7 +154,7 @@ function HomePage() {
       });
     }
     return () => controller?.abort();
-  }, [isAuthenticated]);
+  }, []);
 
   const withSaveAsync = async (callback, ...args) => {
     setIsSaving(true);
@@ -317,11 +317,17 @@ function HomePage() {
       return 'Saving ...';
     }
   };
+
+  if (!isAuthenticated) {
+    return <Navigate to='/' />;
+  }
+
   return (
     <>
       {state.isLoading || isSaving || isAuthLoading ? (
         <LoadSpinner text={LoadText()} />
       ) : null}
+      <Header />
       <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
         <div className='side'>
           <SidePane
@@ -336,8 +342,11 @@ function HomePage() {
           />
         </div>
 
-        <div className='main'>
-          <Header checked={darkMode} toggleDarkMode={handleToggleDarkMode} />
+        <div className='home-main'>
+          <MainHeader
+            checked={darkMode}
+            toggleDarkMode={handleToggleDarkMode}
+          />
           <div className='content'>
             <Search onChange={(text) => setSearchText(text)} />
             <NoteList

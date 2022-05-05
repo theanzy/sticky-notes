@@ -44,14 +44,14 @@
   color: #fafafa;
 }
 
-.btn-group {
+.flex-group {
   display: flex;
   justify-content: space-between;
   align-items: center;
   column-gap: 1rem;
 }
 @media (max-width: 560px) {
-  .btn-group {
+  .flex-group {
     display: none;
   }
 }

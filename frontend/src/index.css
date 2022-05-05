@@ -295,7 +295,7 @@ button.cancel:hover {
   min-width: 5.5rem;
   border-radius: 0.4em;
   background-color: #333;
-  padding: 0.4rem 1rem;
+  padding: 0.2rem 0.5rem;
   user-select: none;
   cursor: pointer;
   font-size: 0.9rem;

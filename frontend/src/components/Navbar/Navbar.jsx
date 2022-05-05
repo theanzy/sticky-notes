@@ -4,19 +4,22 @@ import './Navbar.css';
 import { useAuth } from '../Auth/AuthContext';
 
 function Navbar() {
-  const { signIn, signOut, isAuthenticated } = useAuth();
-
+  const { signIn, signOut, isAuthenticated, user } = useAuth();
+  console.log(user);
   return (
     <div className='header'>
       <div className='logo'>
         <span>Sticky</span>
         <span>Notes</span>
       </div>
-      <div className='btn-group'>
+      <div className='flex-group'>
         {isAuthenticated ? (
-          <div className='btn btn-outline ' onClick={() => signOut()}>
-            Logout
-          </div>
+          <>
+            <div>Hi, {user.name}</div>
+            <div className='btn btn-outline ' onClick={() => signOut()}>
+              Logout
+            </div>
+          </>
         ) : (
           <>
             <div className='btn btn-outline' onClick={() => signIn()}>

@@ -21,7 +21,7 @@ function LandingPage() {
             Welcome to <br />
             Sticky<span className='light-purple'>Notes</span>
           </div>
-          <div className='text'>Note taking app.</div>
+          <div className='text'>Notes taking app.</div>
         </div>
       </header>
     </>

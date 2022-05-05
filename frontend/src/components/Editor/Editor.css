@@ -16,11 +16,9 @@
 
 /* Snow Theme */
 .editor-container .ql-snow.ql-toolbar {
+  padding: 1px 0;
   display: flex;
   border: none;
-  padding: 1px;
-  align-self: center;
-  justify-self: flex-end;
   align-self: center;
   align-items: center;
 }
@@ -65,7 +63,11 @@
 .editor-container .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label {
   border-color: #fff;
 }
-
+.editor-container .ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  top: -340%;
+  box-shadow: none;
+  outline: 1px solid #fff;
+}
 .editor-container .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label {
   color: #030101;
 }

@@ -7,13 +7,13 @@
 
 .dots {
   position: absolute;
-  top: 45%;
-  left: 45%;
-  width: 4px;
-  height: 4px;
+  top: 35%;
+  left: 40%;
+  width: 0.27em;
+  height: 0.27em;
   border-radius: 50%;
-  background-color: #575757;
-  color: #575757;
+  --dots-color: rgb(66, 66, 66);
+  background-color: var(--dots-color);
 }
 
 .dots::before,
@@ -21,20 +21,18 @@
   content: '';
   display: inline-block;
   position: absolute;
-  top: 0;
-  width: 4px;
-  height: 4px;
-  border-radius: 5px;
-  background-color: #575757;
-  color: #575757;
+  width: 0.27em;
+  height: 0.27em;
+  border-radius: 50%;
+  background-color: var(--dots-color);
 }
 
 .dots::before {
-  left: -7px;
+  right: 0.45em;
 }
 
 .dots::after {
-  left: 7px;
+  left: 0.45em;
 }
 
 .dropdown-content {

@@ -97,12 +97,12 @@ const EditableItem = ({
           <Fragment>
             <MdOutlineCheck
               className='item-icon'
-              size={20}
+              size={'1.5rem'}
               onClick={handleSubmit}
             />
             <MdOutlineClose
               className='item-icon'
-              size={20}
+              size={'1.5rem'}
               onClick={handleCancelClicked}
             />
           </Fragment>
@@ -110,12 +110,12 @@ const EditableItem = ({
           <Fragment>
             <MdOutlineEdit
               className='item-icon'
-              size={20}
+              size={'1.5rem'}
               onClick={handleDeleteClicked}
             />
             <MdOutlineDeleteForever
               className='item-icon'
-              size={20}
+              size={'1.5rem'}
               onClick={toggleModal}
             />
             <DeleteModal

@@ -21,7 +21,7 @@ const SidePane = ({
   return (
     <div className='sidebar'>
       <div className='folders-title'>
-        <MdOutlineFolder size={20} /> <span>Folders</span>
+        <MdOutlineFolder size={'1.5rem'} /> <span>Folders</span>
       </div>
       <AddNewItem onAddNewItem={handleAddItem} />
       <div
@@ -29,7 +29,7 @@ const SidePane = ({
           selectedItemId.length === 0 ? 'active' : ''
         }`}
         onClick={() => showAllItems()}>
-        <MdOutlineNotes size={20} /> <span>Show all</span>
+        <MdOutlineNotes size={'1.3rem'} /> <span>Show all</span>
       </div>
       <div>
         {items.map((item) => (

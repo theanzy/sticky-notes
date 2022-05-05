@@ -1,15 +1,16 @@
 import React from 'react';
 import HamburgerMenu from './HamburgerMenu';
-import './Header.css';
+import './Navbar.css';
 import { useAuth } from '../Auth/AuthContext';
 
-function Header() {
+function Navbar() {
   const { signIn, signOut, isAuthenticated } = useAuth();
 
   return (
     <div className='header'>
       <div className='logo'>
-        Sticky<span className='light-purple'>Notes</span>
+        <span>Sticky</span>
+        <span>Notes</span>
       </div>
       <div className='btn-group'>
         {isAuthenticated ? (
@@ -37,4 +38,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default Navbar;

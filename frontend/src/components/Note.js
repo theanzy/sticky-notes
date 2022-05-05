@@ -45,7 +45,9 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   };
 
   return (
-    <div className={`note-content ${note.color}`} style={{ opacity }}>
+    <div
+      className={`note-content ${note.color}`}
+      style={{ opacity: opacity, height: '60vh' }}>
       <DeleteModal
         title='Delete note'
         subtitle='Are you sure to delete this note?'
@@ -54,7 +56,7 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
         onDelete={() => handleDeleteNote(note.id)}
       />
       <div ref={dragRef} className={`note-header ${note.color}-header`}>
-        <MdClose onClick={toggleShowModal} className='md-icon' size='1.3em' />
+        <MdClose onClick={toggleShowModal} className='md-icon' size='1.3rem' />
         <MeatBallMenu
           onSelectedItem={changeColor}
           items={items}

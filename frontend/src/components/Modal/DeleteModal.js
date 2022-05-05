@@ -9,7 +9,11 @@ const DeleteModal = ({ shown, title, subtitle, onDelete, onClosed }) => {
   return createPortal(
     <div className='modal-container'>
       <div className='modal-content'>
-        <MdOutlineClose onClick={onClosed} fontSize={20} className='close' />
+        <MdOutlineClose
+          onClick={onClosed}
+          fontSize={'1.3rem'}
+          className='close'
+        />
         <div className='title'>{title}</div>
         <div className='subtitle'>{subtitle}</div>
         <div className='btn-group'>

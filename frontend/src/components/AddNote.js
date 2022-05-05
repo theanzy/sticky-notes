@@ -16,9 +16,13 @@ const AddNote = ({ handleAddNote }) => {
   };
 
   return (
-    <div className='note new' style={{ display: 'flex', height: '59vh' }}>
+    <div className='note new' style={{ display: 'flex', height: '60vh' }}>
       <div className='note-header'>
-        <MdAdd className='md-icon md-icon-normal' onClick={handleSave} />
+        <MdAdd
+          className='md-icon md-icon-normal'
+          size={'1.5rem'}
+          onClick={handleSave}
+        />
       </div>
       <Editor
         htmlContent={noteContent}

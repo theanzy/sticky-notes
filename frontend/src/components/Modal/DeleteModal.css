@@ -15,25 +15,19 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background: #eeeeee;
+  background: var(--wall-color, #eee);
+  color: var(--font-color, #000);
   border-radius: 5px;
   padding: 3px;
 }
 
-.dark-mode .modal-content {
-  background: #444444;
-  color: #e2e2e2;
-}
 .close {
   padding: 4px;
   align-self: end;
-  color: #000000;
+  color: var(--font-color, #000);
   cursor: pointer;
 }
 
-.dark-mode .close {
-  color: #e2e2e2;
-}
 .close:hover {
   color: #ffaaaa;
 }

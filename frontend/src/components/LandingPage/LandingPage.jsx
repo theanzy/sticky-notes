@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../Auth/AuthContext';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
-import Header from '../Header/Header';
+import Navbar from '../Navbar/Navbar';
 import './LandingPage.css';
 function LandingPage() {
   const { isAuthenticated, isAuthLoading } = useAuth();
@@ -14,14 +14,14 @@ function LandingPage() {
   }
   return (
     <>
-      <Header />
+      <Navbar />
       <header className='showcase'>
         <div className='content'>
           <div className='title'>
-            Welcome To <br />
+            Welcome to <br />
             Sticky<span className='light-purple'>Notes</span>
           </div>
-          <div className='text'>Where Do You Want Fresh To Go Today?</div>
+          <div className='text'>Note taking app.</div>
         </div>
       </header>
     </>

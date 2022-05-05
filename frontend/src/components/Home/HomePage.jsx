@@ -17,7 +17,7 @@ import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
 import { useAuth } from '../Auth/AuthContext';
 import useLocalStorage from '../Hooks/useLocalStorage';
-import Header from '../Header/Header';
+import Navbar from '../Navbar/Navbar';
 import { Navigate } from 'react-router-dom';
 const initialState = {
   isLoading: false,
@@ -233,6 +233,9 @@ function HomePage() {
   };
 
   const addNewFolder = async (folderName) => {
+    if (folderName == '') {
+      return;
+    }
     const res = await withSaveAsync(addFolder, {
       name: folderName,
     });
@@ -327,7 +330,7 @@ function HomePage() {
       {state.isLoading || isSaving || isAuthLoading ? (
         <LoadSpinner text={LoadText()} />
       ) : null}
-      <Header />
+      <Navbar />
       <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
         <div className='side'>
           <SidePane

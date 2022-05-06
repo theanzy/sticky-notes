@@ -1,5 +1,6 @@
 .navbar {
   position: sticky;
+  align-self: flex-start;
   top: 0;
   width: 100%;
   background-color: var(--wall-color, #111111);

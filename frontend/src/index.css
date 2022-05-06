@@ -12,6 +12,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-y: hidden;
 }
 
 code {
@@ -52,12 +53,6 @@ h1 {
   color: var(--font-color, #000);
 }
 
-.main-container {
-  /* Allow side pane to stick on top */
-  position: absolute;
-  width: 100%;
-}
-
 .container {
   display: flex;
   justify-content: space-between;
@@ -66,12 +61,6 @@ h1 {
 
 .side {
   flex: 0 15%;
-  position: relative;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
-  height: 100vh;
 }
 
 .home-main {
@@ -86,12 +75,10 @@ h1 {
   }
 }
 
-.content {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
 .notes-list {
+  padding: 0.35em 3%;
+  overflow: auto;
+  height: 65vh;
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -172,8 +159,9 @@ h1 {
   background-color: var(--secondary-color, #fee8ff);
   color: var(--font-color, #000);
   border-radius: 10px;
-  padding: 5px;
-  margin-bottom: 1.5em;
+  padding: 0.35em;
+  margin: 1em auto;
+  width: 95%;
 }
 
 .search:focus-within {

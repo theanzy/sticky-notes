@@ -1,7 +1,7 @@
 import React, { useReducer, useState, useEffect } from 'react';
 import NoteList from '../NoteList';
 import Search from '../Search';
-import MainHeader from '../MainHeader';
+import ToggleThemeButton from '../ThemeToggleButton';
 import {
   getNotes,
   getFolders,
@@ -333,6 +333,7 @@ function HomePage() {
       <Navbar />
       <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
         <div className='side'>
+          <Search onChange={(text) => setSearchText(text)} />
           <SidePane
             items={state.folders}
             selectedItemId={state.selectedFolderId}
@@ -346,12 +347,13 @@ function HomePage() {
         </div>
 
         <div className='home-main'>
-          <MainHeader
-            checked={darkMode}
-            toggleDarkMode={handleToggleDarkMode}
-          />
+          <div className='header-main'>
+            <ToggleThemeButton
+              checked={darkMode}
+              onToggle={() => handleToggleDarkMode((darkMode) => !darkMode)}
+            />
+          </div>
           <div className='content'>
-            <Search onChange={(text) => setSearchText(text)} />
             <NoteList
               notes={filteredNotes()}
               handleAddNote={handleAddNote}

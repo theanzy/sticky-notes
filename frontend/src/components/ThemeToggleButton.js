@@ -1,4 +1,5 @@
 import React from 'react';
+import './ThemeToggleButton.css';
 const ThemeToggleButton = ({ checked, onToggle }) => {
   return (
     <label className='switch'>

@@ -1,6 +1,6 @@
 import React from 'react';
 import './SidePane.css';
-import { MdOutlineFolder, MdOutlineNotes } from 'react-icons/md';
+import { MdOutlineNotes } from 'react-icons/md';
 import AddNewItem from './AddNewItem';
 import EditableItem from './EditableItem';
 
@@ -20,9 +20,6 @@ const SidePane = ({
   };
   return (
     <div className='sidebar'>
-      <div className='folders-title'>
-        <MdOutlineFolder size={'1.5rem'} /> <span>Folders</span>
-      </div>
       <AddNewItem onAddNewItem={handleAddItem} />
       <div
         className={`show-all-items item ${

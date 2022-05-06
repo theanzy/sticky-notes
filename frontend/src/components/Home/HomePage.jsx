@@ -331,7 +331,8 @@ function HomePage() {
         <LoadSpinner text={LoadText()} />
       ) : null}
       <Navbar />
-      <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
+      <div
+        className={`container main-container ${darkMode ? 'dark-mode' : ''}`}>
         <div className='side'>
           <SidePane
             items={state.folders}

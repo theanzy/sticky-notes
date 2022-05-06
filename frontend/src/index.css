@@ -52,6 +52,12 @@ h1 {
   color: var(--font-color, #000);
 }
 
+.main-container {
+  /* Allow side pane to stick on top */
+  position: absolute;
+  width: 100%;
+}
+
 .container {
   display: flex;
   justify-content: space-between;
@@ -60,6 +66,12 @@ h1 {
 
 .side {
   flex: 0 15%;
+  position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
 }
 
 .home-main {

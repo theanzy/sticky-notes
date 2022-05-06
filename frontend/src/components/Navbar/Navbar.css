@@ -1,8 +1,7 @@
-.header {
+.navbar {
+  position: sticky;
   top: 0;
   width: 100%;
-  position: sticky;
-  overflow: hidden;
   background-color: var(--wall-color, #111111);
   display: flex;
   flex-direction: row;
@@ -10,7 +9,7 @@
   align-items: center;
   color: #fafafa;
   z-index: 2;
-  padding: 0.5em 1em;
+  padding: 0.5em 0.5em;
 }
 
 .logo {

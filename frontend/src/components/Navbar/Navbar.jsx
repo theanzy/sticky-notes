@@ -5,9 +5,8 @@ import { useAuth } from '../Auth/AuthContext';
 
 function Navbar() {
   const { signIn, signOut, isAuthenticated, user } = useAuth();
-  console.log(user);
   return (
-    <div className='header'>
+    <div className='navbar'>
       <div className='logo'>
         <span>Sticky</span>
         <span>Notes</span>

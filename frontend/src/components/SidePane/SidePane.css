@@ -2,7 +2,6 @@
   width: 200px;
   background-color: var(--wall-color, #f9eaff);
   color: var(--font-color, #333);
-  position: relative;
   height: 100%;
   overflow: auto;
   outline: 1px solid var(--outline-color, #b085ff);

@@ -16,9 +16,9 @@ import SidePane from '../SidePane/SidePane';
 import LoadSpinner from '../LoadSpinner/LoadSpinner';
 import { ActionTypes } from '../../data/Constants';
 import { useAuth } from '../Auth/AuthContext';
-import useLocalStorage from '../Hooks/useLocalStorage';
 import Navbar from '../Navbar/Navbar';
 import { Navigate } from 'react-router-dom';
+import useDarkMode from '../Hooks/useDarkMode';
 const initialState = {
   isLoading: false,
   folders: [],
@@ -126,7 +126,7 @@ function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isAuthenticated, isAuthLoading } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
-  const [darkMode, setDarkMode] = useLocalStorage('dark-mode', false);
+  const [darkMode, setDarkMode] = useDarkMode();
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
@@ -308,10 +308,6 @@ function HomePage() {
     dispatch({ type: ActionTypes.SHOW_ALL_NOTES });
   };
 
-  const handleToggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-  };
-
   const LoadText = () => {
     if (state.isLoading || isAuthLoading) {
       return 'Loading ...';
@@ -331,7 +327,7 @@ function HomePage() {
         <LoadSpinner text={LoadText()} />
       ) : null}
       <Navbar />
-      <div className={`container ${darkMode ? 'dark-mode' : ''}`}>
+      <div className='container'>
         <div className='side'>
           <Search onChange={(text) => setSearchText(text)} />
           <SidePane
@@ -350,7 +346,7 @@ function HomePage() {
           <div className='header-main'>
             <ToggleThemeButton
               checked={darkMode}
-              onToggle={() => handleToggleDarkMode((darkMode) => !darkMode)}
+              onToggle={() => setDarkMode((v) => !v)}
             />
           </div>
           <div className='content'>

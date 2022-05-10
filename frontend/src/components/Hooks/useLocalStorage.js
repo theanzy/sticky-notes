@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react';
 
 function getSavedValue(key, initialValue) {
-  const savedValue = JSON.parse(localStorage.getItem(key));
-  if (savedValue) return savedValue;
-
-  if (initialValue instanceof Function) return initialValue();
+  const jsonValue = localStorage.getItem(key);
+  if (jsonValue != null) {
+    return JSON.parse(jsonValue);
+  }
+  if (typeof defaultValue === 'function') return initialValue();
 
   return initialValue;
 }
 
 export default function useLocalStorage(key, initialValue) {
   const [value, setValue] = useState(() => {
-    return getSavedValue(key, initialValue);
+    const savedValue = getSavedValue(key, initialValue);
+    return savedValue;
   });
-
   useEffect(() => {
+    if (value === undefined) return localStorage.removeItem(key);
     localStorage.setItem(key, JSON.stringify(value));
-  }, [value]);
+  }, [key, value]);
 
   return [value, setValue];
 }

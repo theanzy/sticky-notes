@@ -3,7 +3,7 @@
   align-self: flex-start;
   top: 0;
   width: 100%;
-  background-color: var(--wall-color, #111111);
+  background-color: var(--primary-color, #111);
   display: flex;
   flex-direction: row;
   justify-content: space-between;

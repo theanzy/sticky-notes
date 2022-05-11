@@ -2,16 +2,22 @@
   flex: 1;
   display: flex;
   cursor: context-menu;
+  overflow: hidden;
 }
 .editor-container .quill {
   width: 100%;
   display: flex;
   flex-direction: column-reverse;
   justify-content: flex-start;
+  position: relative;
 }
 
 .editor-container .ql-container {
   border: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 90%;
 }
 
 /* Snow Theme */

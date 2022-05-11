@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import Editor from './Editor/Editor';
@@ -8,19 +8,11 @@ import { DragTypes } from '../data/Constants';
 import DeleteModal from './Modal/DeleteModal';
 import useDebounce from './Hooks/useDebounce';
 import DragPlaceholder from './Dragging/DragPlaceholder';
+
 const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
   const [showModal, setShowModal] = useState(false);
-  const toggleShowModal = () => {
-    setShowModal((prev) => !prev);
-  };
-
   const [noteContent, setNoteContent] = useState(note.content);
-  useDebounce(
-    () => handleNoteUpdated({ ...note, content: noteContent }),
-    2000,
-    [noteContent]
-  );
 
   const [{ opacity, isDragging }, dragRef] = useDrag({
     type: DragTypes.Note,
@@ -30,6 +22,17 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
       opacity: monitor.isDragging() ? 0.7 : 1.0,
     }),
   });
+  const modalRef = useRef();
+
+  const toggleShowModal = () => {
+    setShowModal((prev) => !prev);
+  };
+
+  useDebounce(
+    () => handleNoteUpdated({ ...note, content: noteContent }),
+    2000,
+    [noteContent]
+  );
 
   const updateContent = (content) => {
     setNoteContent(content);
@@ -49,6 +52,7 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
       className={`note-content ${note.color}`}
       style={{ opacity: opacity, height: '60vh' }}>
       <DeleteModal
+        modalRef={modalRef}
         title='Delete note'
         subtitle='Are you sure to delete this note?'
         shown={showModal}

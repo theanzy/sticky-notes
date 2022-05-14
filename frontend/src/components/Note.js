@@ -1,18 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdOutlineSave } from 'react-icons/md';
 import MeatBallMenu from './MeatBallMenu/MeatBallMenu';
 import Editor from './Editor/Editor';
 import './Colors.css';
 import { useDrag } from 'react-dnd';
 import { DragTypes } from '../data/Constants';
 import DeleteModal from './Modal/DeleteModal';
-import useDebounce from './Hooks/useDebounce';
 import DragPlaceholder from './Dragging/DragPlaceholder';
 
 const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
   const [showModal, setShowModal] = useState(false);
-  const [noteContent, setNoteContent] = useState(note.content);
+  const [content, setContent] = useState(note.content);
+  const [color, setColor] = useState(note.color);
 
   const [{ opacity, isDragging }, dragRef] = useDrag({
     type: DragTypes.Note,
@@ -28,28 +28,17 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
     setShowModal((prev) => !prev);
   };
 
-  useDebounce(
-    () => handleNoteUpdated({ ...note, content: noteContent }),
-    2000,
-    [noteContent]
-  );
-
-  const updateContent = (content) => {
-    setNoteContent(content);
-  };
-
-  const changeColor = (newColor) => {
-    if (newColor !== note.color) {
-      handleNoteUpdated({
-        ...note,
-        color: newColor,
-      });
-    }
+  const handleSaveNote = () => {
+    handleNoteUpdated({
+      ...note,
+      content,
+      color,
+    });
   };
 
   return (
     <div
-      className={`note-content ${note.color}`}
+      className={`note-content ${color}`}
       style={{ opacity: opacity, height: '60vh' }}>
       <DeleteModal
         modalRef={modalRef}
@@ -59,24 +48,24 @@ const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
         onClosed={toggleShowModal}
         onDelete={() => handleDeleteNote(note.id)}
       />
-      <div ref={dragRef} className={`note-header ${note.color}-header`}>
+      <div ref={dragRef} className={`note-header ${color}-header`}>
         <MdClose onClick={toggleShowModal} className='md-icon' size='1.3rem' />
         <MeatBallMenu
-          onSelectedItem={changeColor}
+          onSelectedItem={(item) => setColor(item)}
           items={items}
-          selectedItem={note.color}
+          selectedItem={color}
         />
       </div>
-      <div style={{ display: 'flex', height: '55vh' }}>
-        {isDragging ? (
-          <DragPlaceholder />
-        ) : (
-          <Editor htmlContent={noteContent} onContentChange={updateContent} />
-        )}
-
-        <div className='note-footer'>
-          Last updated on <small>{note.updatedDate}</small>
-        </div>
+      {isDragging ? (
+        <DragPlaceholder />
+      ) : (
+        <Editor
+          htmlContent={content}
+          onContentChange={(value) => setContent(value)}
+        />
+      )}
+      <div onClick={handleSaveNote} className='save-btn'>
+        <MdOutlineSave className='save-icon' />
       </div>
     </div>
   );

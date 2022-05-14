@@ -93,7 +93,44 @@ h1 {
 }
 .note-content {
   border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
+
+.note-content:hover .save-btn,
+.note-content:focus-within .save-btn {
+  display: flex;
+}
+
+.note-content .save-btn {
+  position: absolute;
+  bottom: 1%;
+  right: 1%;
+  width: 1.8rem;
+  height: 1.8rem;
+  background-color: rgba(2, 2, 2, 0.1);
+  color: #222;
+  border-radius: 50%;
+  transition: all 50ms ease-in-out;
+  z-index: 1;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.save-btn:hover,
+.save-btn:focus {
+  background-color: white;
+  color: rgb(17, 128, 255);
+  cursor: pointer;
+  user-select: none;
+}
+
+.save-icon {
+  font-size: 1.4rem;
+}
+
 .note.new {
   background-color: #67d7cc;
 }
@@ -125,19 +162,6 @@ h1 {
   justify-content: space-between;
   cursor: grab;
   height: 25px;
-}
-
-.note:focus-within .note-footer {
-  display: none;
-}
-
-.note-footer {
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  font-size: smaller;
-  padding: 1px 5px;
-  height: 46px;
 }
 
 .md-icon {

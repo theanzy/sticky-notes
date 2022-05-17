@@ -8,7 +8,9 @@ import { DragTypes } from '../data/Constants';
 import DeleteModal from './Modal/DeleteModal';
 import DragPlaceholder from './Dragging/DragPlaceholder';
 
-const Note = ({ note, handleDeleteNote, handleNoteUpdated }) => {
+const Note = (props) => {
+  const { note, handleDeleteNote, handleNoteUpdated } = props;
+
   const items = ['red', 'pink', 'green', 'blue', 'gray', 'yellow', 'orange'];
   const [showModal, setShowModal] = useState(false);
   const [content, setContent] = useState(note.content);

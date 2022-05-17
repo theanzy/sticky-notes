@@ -45,4 +45,4 @@ const SidePane = ({
   );
 };
 
-export default SidePane;
+export default React.memo(SidePane);

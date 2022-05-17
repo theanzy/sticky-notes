@@ -1,4 +1,10 @@
-import React, { useReducer, useState, useEffect } from 'react';
+import React, {
+  useReducer,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import NoteList from '../NoteList';
 import Search from '../Search';
 import ToggleThemeButton from '../ThemeToggleButton';
@@ -199,6 +205,7 @@ function HomePage() {
       setIsSaving(false);
     }
   };
+
   const handleNoteUpdated = async (updatedNote) => {
     let data = {
       color: updatedNote.color,
@@ -217,7 +224,7 @@ function HomePage() {
     }
   };
 
-  const filteredNotes = () => {
+  const filteredNotes = useMemo(() => {
     const notes = state.notes.filter((note) => {
       const div = document.createElement('div');
       div.innerHTML = note.content;
@@ -230,9 +237,9 @@ function HomePage() {
       );
     });
     return notes;
-  };
+  }, [state.notes, searchText, state.selectedFolderId]);
 
-  const addNewFolder = async (folderName) => {
+  const addNewFolder = useCallback(async (folderName) => {
     if (folderName == '') {
       return;
     }
@@ -249,9 +256,9 @@ function HomePage() {
     } else {
       setIsSaving(false);
     }
-  };
+  }, []);
 
-  const handleDeleteFolder = async (deletedFolder) => {
+  const handleDeleteFolder = useCallback(async (deletedFolder) => {
     const res = await withSaveAsync(deleteFolder, deletedFolder.id);
     if (res) {
       dispatchWithSave({
@@ -263,9 +270,9 @@ function HomePage() {
     } else {
       setIsSaving(false);
     }
-  };
+  }, []);
 
-  const changeNoteFolder = async ({ folderId, noteId }) => {
+  const changeNoteFolder = useCallback(async ({ folderId, noteId }) => {
     const note = state.notes.find((note) => note.id === noteId);
     if (note && note.folderId !== folderId) {
       const data = { folder: folderId };
@@ -279,18 +286,26 @@ function HomePage() {
         setIsSaving(false);
       }
     }
-  };
+  }, []);
 
-  const handleFolderSelected = (folderId) => {
-    dispatch({
-      type: ActionTypes.ON_FOLDER_SELECTED,
-      payload: {
-        selectedFolderId: folderId,
-      },
-    });
-  };
+  const handleFolderSelected = useCallback(
+    (folderId) => {
+      console.log('selected: ', folderId, 'current: ', state.selectedFolderId);
+      console.log(state.folders);
+      if (folderId !== state.selectedFolderId) {
+        console.log('dispatch folder selected ', folderId);
+        dispatch({
+          type: ActionTypes.ON_FOLDER_SELECTED,
+          payload: {
+            selectedFolderId: folderId,
+          },
+        });
+      }
+    },
+    [state.selectedFolderId]
+  );
 
-  const handleSelectedFolderChanged = async (item) => {
+  const handleSelectedFolderChanged = useCallback(async (item) => {
     const res = await withSaveAsync(updateFolder, item.id, { name: item.name });
     if (res) {
       dispatchWithSave({
@@ -302,11 +317,15 @@ function HomePage() {
     } else {
       setIsSaving(false);
     }
-  };
+  }, []);
 
-  const handleShowAllItems = () => {
-    dispatch({ type: ActionTypes.SHOW_ALL_NOTES });
-  };
+  const handleShowAllItems = useCallback(() => {
+    console.log('show all items, current: ', state.selectedFolderId);
+    if (state.selectedFolderId != '') {
+      console.log('dispatch');
+      dispatch({ type: ActionTypes.SHOW_ALL_NOTES });
+    }
+  }, [state.selectedFolderId]);
 
   const LoadText = () => {
     if (state.isLoading || isAuthLoading) {
@@ -351,7 +370,7 @@ function HomePage() {
           </div>
           <div className='content'>
             <NoteList
-              notes={filteredNotes()}
+              notes={filteredNotes}
               handleAddNote={handleAddNote}
               handleDeleteNote={handleDeleteNote}
               handleNoteUpdated={handleNoteUpdated}

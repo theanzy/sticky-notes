@@ -24,4 +24,4 @@ const NoteList = ({
   );
 };
 
-export default NoteList;
+export default React.memo(NoteList);

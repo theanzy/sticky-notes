@@ -40,6 +40,7 @@ const reducer = (state, action) => {
         folders: action.payload.folders,
         notes: action.payload.notes,
         isLoading: false,
+        noteUpdatedTime: Date.now(),
       };
     case ActionTypes.FETCH_ERROR:
       return {
@@ -50,20 +51,21 @@ const reducer = (state, action) => {
       return {
         ...state,
         isLoading: true,
-      };
-    case ActionTypes.SAVING:
-      return {
-        ...state,
+        spinnerText: action.payload.spinnerText,
       };
     case ActionTypes.ADD_NOTE:
       return {
         ...state,
         notes: [...state.notes, action.payload.note],
+        isLoading: false,
+        noteUpdatedTime: Date.now(),
       };
     case ActionTypes.DELETE_NOTE:
       return {
         ...state,
         notes: state.notes.filter((note) => note.id !== action.payload.id),
+        isLoading: false,
+        noteUpdatedTime: Date.now(),
       };
     case ActionTypes.UPDATE_NOTE:
       return {
@@ -74,6 +76,8 @@ const reducer = (state, action) => {
           }
           return note;
         }),
+        isLoading: false,
+        noteUpdatedTime: Date.now(),
       };
     case ActionTypes.CHANGE_NOTE_FOLDER:
       return {
@@ -83,12 +87,15 @@ const reducer = (state, action) => {
             ? updateField(note, 'folderId', action.payload.folderId)
             : note
         ),
+        isLoading: false,
+        noteUpdatedTime: Date.now(),
       };
     case ActionTypes.ADD_NEW_FOLDER:
       return {
         ...state,
         folders: [...state.folders, action.payload.folder],
         selectedFolderId: action.payload.folder.id,
+        isLoading: false,
       };
     case ActionTypes.DELETE_FOLDER:
       return {
@@ -97,11 +104,13 @@ const reducer = (state, action) => {
           (folder) => folder.id !== action.payload.folderId
         ),
         selectedFolderId: '',
+        isLoading: false,
       };
     case ActionTypes.SELECTED_FOLDER_CHANGED:
       return {
         ...state,
         folders: foldersChanged(state.folders, action.payload.folder),
+        isLoading: false,
       };
     case ActionTypes.ON_FOLDER_SELECTED:
       return {
@@ -131,13 +140,17 @@ const foldersChanged = (folders, updatedFolder) => {
 function HomePage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isAuthenticated, isAuthLoading } = useAuth();
-  const [isSaving, setIsSaving] = useState(false);
   const [darkMode, setDarkMode] = useDarkMode();
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     const fetchApiAsync = async () => {
-      dispatch({ type: ActionTypes.LOADING });
+      dispatch({
+        type: ActionTypes.LOADING,
+        payload: {
+          spinnerText: 'Loading...',
+        },
+      });
       const [getFoldersResult, getNotesResult] = await Promise.all([
         getFolders(),
         getNotes(),
@@ -152,7 +165,7 @@ function HomePage() {
       });
     };
     let controller = new AbortController();
-    if (isAuthenticated) {
+    if (isAuthenticated && !isAuthLoading) {
       fetchApiAsync();
     } else {
       dispatch({
@@ -160,69 +173,82 @@ function HomePage() {
       });
     }
     return () => controller?.abort();
-  }, []);
+  }, [isAuthLoading, isAuthenticated]);
 
   const withSaveAsync = async (callback, ...args) => {
-    setIsSaving(true);
+    dispatch({
+      type: ActionTypes.LOADING,
+      payload: {
+        spinnerText: 'Saving...',
+      },
+    });
     const res = await callback(...args);
     return res;
   };
 
-  const dispatchWithSave = (data) => {
-    dispatch(data);
-    setIsSaving(false);
-  };
+  const handleAddNote = useCallback(
+    async (content) => {
+      const data = {
+        content: content,
+        color: 'yellow',
+      };
+      if (state.selectedFolderId.length > 0) {
+        data.folder = state.selectedFolderId;
+      }
+      const newNote = await withSaveAsync(addNote, data);
+      if (newNote) {
+        dispatch({
+          type: ActionTypes.ADD_NOTE,
+          payload: {
+            note: newNote,
+          },
+        });
+      } else {
+        dispatch({ type: ActionTypes.FETCH_ERROR });
+      }
+    },
+    [state.noteUpdatedTime, searchText, state.selectedFolderId]
+  );
 
-  const handleAddNote = async (content) => {
-    const data = {
-      content: content,
-      color: 'yellow',
-    };
-    if (state.selectedFolderId.length > 0) {
-      data.folder = state.selectedFolderId;
-    }
-    const newNote = await withSaveAsync(addNote, data);
-    if (newNote) {
-      dispatchWithSave({
-        type: ActionTypes.ADD_NOTE,
-        payload: {
-          note: newNote,
-        },
-      });
-    } else {
-      setIsSaving(false);
-    }
-  };
+  const handleDeleteNote = useCallback(
+    async (id) => {
+      const res = await withSaveAsync(deleteNote, id);
+      if (res) {
+        dispatch({
+          type: ActionTypes.DELETE_NOTE,
+          payload: { id: res.id },
+        });
+      } else {
+        dispatch({ type: ActionTypes.FETCH_ERROR });
+      }
+    },
+    [state.noteUpdatedTime, searchText, state.selectedFolderId]
+  );
 
-  const handleDeleteNote = async (id) => {
-    const res = await withSaveAsync(deleteNote, id);
-    if (res) {
-      dispatchWithSave({
-        type: ActionTypes.DELETE_NOTE,
-        payload: { id: res.id },
-      });
-    } else {
-      setIsSaving(false);
-    }
-  };
-
-  const handleNoteUpdated = async (updatedNote) => {
-    let data = {
-      color: updatedNote.color,
-      content: updatedNote.content,
-    };
-    const noteToUpdate = await withSaveAsync(updateNote, updatedNote.id, data);
-    if (noteToUpdate) {
-      dispatchWithSave({
-        type: ActionTypes.UPDATE_NOTE,
-        payload: {
-          note: noteToUpdate,
-        },
-      });
-    } else {
-      setIsSaving(false);
-    }
-  };
+  const handleNoteUpdated = useCallback(
+    async (updatedNote) => {
+      let data = {
+        color: updatedNote.color,
+        content: updatedNote.content,
+      };
+      const noteToUpdate = await withSaveAsync(
+        updateNote,
+        updatedNote.id,
+        data
+      );
+      if (noteToUpdate) {
+        dispatch({
+          type: ActionTypes.UPDATE_NOTE,
+          payload: {
+            note: noteToUpdate,
+          },
+        });
+      } else {
+        dispatch({ type: ActionTypes.FETCH_ERROR });
+      }
+    },
+    [state.noteUpdatedTime, searchText, state.selectedFolderId]
+  );
 
   const filteredNotes = useMemo(() => {
     const notes = state.notes.filter((note) => {
@@ -237,7 +263,7 @@ function HomePage() {
       );
     });
     return notes;
-  }, [state.notes, searchText, state.selectedFolderId]);
+  }, [state.noteUpdatedTime, searchText, state.selectedFolderId]);
 
   const addNewFolder = useCallback(async (folderName) => {
     if (folderName == '') {
@@ -247,28 +273,28 @@ function HomePage() {
       name: folderName,
     });
     if (res) {
-      dispatchWithSave({
+      dispatch({
         type: ActionTypes.ADD_NEW_FOLDER,
         payload: {
           folder: res,
         },
       });
     } else {
-      setIsSaving(false);
+      dispatch({ type: ActionTypes.FETCH_ERROR });
     }
   }, []);
 
   const handleDeleteFolder = useCallback(async (deletedFolder) => {
     const res = await withSaveAsync(deleteFolder, deletedFolder.id);
     if (res) {
-      dispatchWithSave({
+      dispatch({
         type: ActionTypes.DELETE_FOLDER,
         payload: {
           folderId: res.id,
         },
       });
     } else {
-      setIsSaving(false);
+      dispatch({ type: ActionTypes.FETCH_ERROR });
     }
   }, []);
 
@@ -278,22 +304,19 @@ function HomePage() {
       const data = { folder: folderId };
       const updatedNote = await withSaveAsync(updateNote, noteId, data);
       if (updatedNote) {
-        dispatchWithSave({
+        dispatch({
           type: ActionTypes.CHANGE_NOTE_FOLDER,
           payload: { noteId: noteId, folderId: folderId },
         });
       } else {
-        setIsSaving(false);
+        dispatch({ type: ActionTypes.FETCH_ERROR });
       }
     }
   }, []);
 
   const handleFolderSelected = useCallback(
     (folderId) => {
-      console.log('selected: ', folderId, 'current: ', state.selectedFolderId);
-      console.log(state.folders);
       if (folderId !== state.selectedFolderId) {
-        console.log('dispatch folder selected ', folderId);
         dispatch({
           type: ActionTypes.ON_FOLDER_SELECTED,
           payload: {
@@ -308,14 +331,14 @@ function HomePage() {
   const handleSelectedFolderChanged = useCallback(async (item) => {
     const res = await withSaveAsync(updateFolder, item.id, { name: item.name });
     if (res) {
-      dispatchWithSave({
+      dispatch({
         type: ActionTypes.SELECTED_FOLDER_CHANGED,
         payload: {
           folder: res,
         },
       });
     } else {
-      setIsSaving(false);
+      dispatch({ type: ActionTypes.FETCH_ERROR });
     }
   }, []);
 
@@ -327,23 +350,14 @@ function HomePage() {
     }
   }, [state.selectedFolderId]);
 
-  const LoadText = () => {
-    if (state.isLoading || isAuthLoading) {
-      return 'Loading ...';
-    }
-    if (isSaving) {
-      return 'Saving ...';
-    }
-  };
-
   if (!isAuthenticated) {
     return <Navigate to='/' />;
   }
 
   return (
     <>
-      {state.isLoading || isSaving || isAuthLoading ? (
-        <LoadSpinner text={LoadText()} />
+      {state.isLoading || isAuthLoading ? (
+        <LoadSpinner text={state.spinnerText} />
       ) : null}
       <Navbar />
       <div className='container'>

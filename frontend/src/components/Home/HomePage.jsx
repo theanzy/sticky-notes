@@ -113,6 +113,9 @@ const reducer = (state, action) => {
         isLoading: false,
       };
     case ActionTypes.ON_FOLDER_SELECTED:
+      if (state.selectedFolderId === action.payload.selectedFolderId) {
+        return state;
+      }
       return {
         ...state,
         selectedFolderId: action.payload.selectedFolderId,
@@ -160,7 +163,6 @@ function HomePage() {
         payload: {
           folders: getFoldersResult,
           notes: getNotesResult,
-          isLoading: false,
         },
       });
     };
@@ -255,18 +257,17 @@ function HomePage() {
       const div = document.createElement('div');
       div.innerHTML = note.content;
       const text = div.textContent || div.innerText || '';
-      return (
-        text.toLocaleLowerCase().includes(searchText) &&
-        (state.selectedFolderId.length > 0
-          ? note.folderId === state.selectedFolderId
-          : true)
-      );
+      const hasSearchText = text.toLocaleLowerCase().includes(searchText);
+      const includesFolder =
+        state.selectedFolderId.length === 0 ||
+        note.folderId === state.selectedFolderId;
+      return hasSearchText && includesFolder;
     });
     return notes;
   }, [state.noteUpdatedTime, searchText, state.selectedFolderId]);
 
   const addNewFolder = useCallback(async (folderName) => {
-    if (folderName == '') {
+    if (folderName === '') {
       return;
     }
     const res = await withSaveAsync(addFolder, {
@@ -299,34 +300,26 @@ function HomePage() {
   }, []);
 
   const changeNoteFolder = useCallback(async ({ folderId, noteId }) => {
-    const note = state.notes.find((note) => note.id === noteId);
-    if (note && note.folderId !== folderId) {
-      const data = { folder: folderId };
-      const updatedNote = await withSaveAsync(updateNote, noteId, data);
-      if (updatedNote) {
-        dispatch({
-          type: ActionTypes.CHANGE_NOTE_FOLDER,
-          payload: { noteId: noteId, folderId: folderId },
-        });
-      } else {
-        dispatch({ type: ActionTypes.FETCH_ERROR });
-      }
+    const data = { folder: folderId };
+    const updatedNote = await withSaveAsync(updateNote, noteId, data);
+    if (updatedNote) {
+      dispatch({
+        type: ActionTypes.CHANGE_NOTE_FOLDER,
+        payload: { noteId: noteId, folderId: folderId },
+      });
+    } else {
+      dispatch({ type: ActionTypes.FETCH_ERROR });
     }
   }, []);
 
-  const handleFolderSelected = useCallback(
-    (folderId) => {
-      if (folderId !== state.selectedFolderId) {
-        dispatch({
-          type: ActionTypes.ON_FOLDER_SELECTED,
-          payload: {
-            selectedFolderId: folderId,
-          },
-        });
-      }
-    },
-    [state.selectedFolderId]
-  );
+  const handleFolderSelected = useCallback((folderId) => {
+    dispatch({
+      type: ActionTypes.ON_FOLDER_SELECTED,
+      payload: {
+        selectedFolderId: folderId,
+      },
+    });
+  }, []);
 
   const handleSelectedFolderChanged = useCallback(async (item) => {
     const res = await withSaveAsync(updateFolder, item.id, { name: item.name });

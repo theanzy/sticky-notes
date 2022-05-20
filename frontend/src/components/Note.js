@@ -18,7 +18,7 @@ const Note = (props) => {
 
   const [{ opacity, isDragging }, dragRef] = useDrag({
     type: DragTypes.Note,
-    item: { noteId: note.id },
+    item: { noteId: note.id, folderId: note.folderId },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
       opacity: monitor.isDragging() ? 0.7 : 1.0,
@@ -37,7 +37,6 @@ const Note = (props) => {
       color,
     });
   };
-
   return (
     <div
       className={`note-content ${color}`}

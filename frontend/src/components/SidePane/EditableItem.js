@@ -9,6 +9,7 @@ import {
 import { useDrop } from 'react-dnd';
 import { DragTypes } from '../../data/Constants';
 import DeleteModal from '../Modal/DeleteModal';
+
 const EditableItem = ({
   selectedItemId,
   item,
@@ -32,8 +33,10 @@ const EditableItem = ({
 
   const [{ isDraggingOver }, dropRef] = useDrop({
     accept: DragTypes.Note,
-    drop: (dest) => {
-      onDropItem({ folderId: item.id, noteId: dest.noteId });
+    drop: (src) => {
+      if (src.folderId !== item.id) {
+        onDropItem({ folderId: item.id, noteId: src.noteId });
+      }
     },
     collect: (monitor) => ({
       isDraggingOver: monitor.isOver(),

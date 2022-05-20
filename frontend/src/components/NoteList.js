@@ -1,12 +1,10 @@
 import AddNote from './AddNote';
 import Note from './Note';
 import React from 'react';
-const NoteList = ({
-  notes,
-  handleAddNote,
-  handleDeleteNote,
-  handleNoteUpdated,
-}) => {
+
+const NoteList = (props) => {
+  const { notes, handleAddNote, handleDeleteNote, handleNoteUpdated } = props;
+
   return (
     <div className='notes-list'>
       <AddNote handleAddNote={handleAddNote} />

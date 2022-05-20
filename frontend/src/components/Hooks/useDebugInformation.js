@@ -24,7 +24,7 @@ export default function useDebugInformation(componentName, props) {
   useEffect(() => {
     previousProps.current = props;
     lastRenderTimeStamp.current = Date.now();
-    console.log('[debug-info]', componentName, info);
+    console.log('[debug-information]', componentName, info);
   });
   return info;
 }
